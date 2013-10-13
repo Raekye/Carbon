@@ -1,0 +1,9 @@
+Name: Carbon
+Version: 0.0.0
+Description: Implementation of data structures and algorithms in random languages
+License: MIT
+License-file: LICENSE
+Author: Raekye
+Maintainer: hmmmmmm
+Build-Type: Simple
+Cabal-Version: >= 1.1
