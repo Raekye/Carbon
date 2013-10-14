@@ -1,9 +1,20 @@
-Name: Carbon
+Name: Carbon-Haskell
 Version: 0.0.0
-Description: Implementation of data structures and algorithms in random languages
+Description: Implementation of random things in random languages
 License: MIT
-License-file: LICENSE
+License-file: ../LICENSE
 Author: Raekye
 Maintainer: hmmmmmm
+bug-reports: https://github.com/Raekye/Carbon/issues
 Build-Type: Simple
-Cabal-Version: >= 1.1
+Cabal-Version: >=1.2
+
+Test-Suite test
+ type: exitcode-stdio-1.0
+ Hs-Source-Dirs: src, testsuite/tests
+ Main-Is: AllTests.hs
+ build-depends: base, test-framework, test-framework-quickcheck2, test-framework-hunit, QuickCheck, HUnit
+
+Library
+ Hs-Source-Dirs: src
+ build-depends: base

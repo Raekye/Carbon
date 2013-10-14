@@ -4,6 +4,9 @@
 
 %% Application callbacks
 -export([start/2, stop/1]).
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
+-endif.
 
 %% ===================================================================
 %% Application callbacks
@@ -14,3 +17,10 @@ start(_StartType, _StartArgs) ->
 
 stop(_State) ->
     ok.
+
+-ifdef(TEST).
+
+simple_test() ->
+	ok = application:start(carbon_erlang),
+	?assertNot(undefined == whereis(carbon_erlang_sup)).
+-endif.
