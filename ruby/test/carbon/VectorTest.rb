@@ -7,6 +7,12 @@ class VectorTest < Test::Unit::TestCase
 	@@v2 = Vector.new([4, 5, 6])
 	@@v3 = v3 = Vector.new([7, 8, 9, 0])
 
+	def test_entries
+		assert_raise(RuntimeError) {
+			@@v1.entries[0] = 0
+		}
+	end
+
 	def test_add
 		assert_equal(@@v1.add(@@v2), Vector.new([5, 7, 9]))
 		assert_raise(ArgumentError) {

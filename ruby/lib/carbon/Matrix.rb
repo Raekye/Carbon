@@ -49,6 +49,8 @@ class Matrix
 				@rows.push(Vector.new(row))
 			end
 		end
+		@rows.freeze
+		@cols.freeze
 	end
 
 	def is_row_vector
@@ -59,12 +61,16 @@ class Matrix
 		return @cols.length == 1
 	end
 
+	def is_square_matrix
+		return @rows.length == @cols.length
+	end
+
 	def cols
-		return @cols.dup
+		return @cols
 	end
 
 	def rows
-		return @rows.dup
+		return @rows
 	end
 
 	def get(n, m)
@@ -84,13 +90,86 @@ class Matrix
 		if m < 0 or m >= @cols.length
 			raise IndexError
 		end
-		new_cols = self.cols
+		new_cols = self.cols.dup
 		new_cols[m] = new_cols[m].set(n, val)
 		return Matrix.new(new_cols)
 	end
 
+	def add(other)
+		if @rows.length != other.rows.length
+			raise ArgumentError
+		end
+		if @cols.length != other.cols.length
+			raise ArgumentError
+		end
+		sum_cols = []
+		@cols.each_with_index do |col, index|
+			sum_cols.push(col.add(other.cols[index]))
+		end
+		return Matrix.new(sum_cols)
+	end
+
+	def multiply(other)
+		product_cols = []
+		if other.is_a? Numeric
+			@cols.each do |col|
+				product_cols.push(col.multiply(other))
+			end
+		else
+			if @rows.length != other.cols.length
+				raise ArgumentError
+			end
+			other.cols.each do |col|
+				vec_entries = []
+				@rows.each do |row|
+					vec_entries.push(row.dot(col))
+				end
+				product_cols.push(Vector.new(vec_entries))
+			end
+		end
+		return Matrix.new(product_cols)
+	end
+
+	def determinant
+		if !self.is_square_matrix
+			raise RuntimeError, "Determinant of non-square matrix"
+		end
+		if @rows.length == 0
+			return 0 # TODO: meaning of 0 by 0 matrix?
+		end
+		if @rows.length == 1
+			return self.get(0, 0)
+		end
+		if @rows.length == 2
+			return self.get(0, 0) * self.get(1, 1) - self.get(0, 1) * self.get(1, 0)
+		end
+		bottom_rows = self.sub_matrix([0], [])
+		return @cols.each_with_index.inject(0) { |sum, (elem, i)| sum + ((-1) ** i) * elem[0] * bottom_rows.sub_matrix([], [i]).determinant }
+	end
+
 	def inverse
-		return nil
+		if !self.is_square_matrix
+			raise RuntimeError, "Inverse of non-square matrix"
+		end
+		if self.determinant == 0
+			return nil
+		end
+		return self
+	end
+
+	def sub_matrix(remove_rows, remove_cols)
+		new_cols = []
+		@cols.each_with_index do |col, i|
+			if remove_cols.index(i) != nil
+				next
+			end
+			new_vec_entries = col.entries.dup
+			remove_rows.each do |remove_index|
+				new_vec_entries.delete_at(remove_index)
+			end
+			new_cols.push(Vector.new(new_vec_entries))
+		end
+		return Matrix.new(new_cols)
 	end
 
 	def ==(other)
@@ -104,10 +183,6 @@ class Matrix
 		end
 		return true
 	end
-
-=begin
-	- add, subtract, multiply scalar, multiply matrix
-=end
 
 	def self.zero_matrix(rows, cols)
 		return Matrix.new([Vector.zero_vector(rows)] * cols)

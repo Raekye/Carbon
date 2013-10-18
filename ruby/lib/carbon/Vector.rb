@@ -8,6 +8,7 @@ class Vector
 			end
 			@entries.push(val)
 		end
+		@entries.freeze
 	end
 
 	def length
@@ -22,7 +23,7 @@ class Vector
 	end
 
 	def entries
-		return @entries.dup
+		return @entries
 	end
 
 	def set(i, val)
@@ -32,7 +33,7 @@ class Vector
 		if not val.is_a? Numeric
 			raise ArgumentError
 		end
-		copy_entries = self.entries
+		copy_entries = self.entries.dup
 		copy_entries[i] = val
 		return Vector.new(copy_entries)
 	end
@@ -65,8 +66,8 @@ class Vector
 		if self.length != other.length
 			return false
 		end
-		(1..self.length).each do |i|
-			if self[i - 1] != other[i - 1]
+		(0...self.length).each do |i|
+			if self[i] != other[i]
 				return false
 			end
 		end
