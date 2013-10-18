@@ -12,7 +12,7 @@ Cabal-Version: >=1.2
 Test-Suite test
  type: exitcode-stdio-1.0
  Hs-Source-Dirs: src, testsuite/tests
- Main-Is: AllTests.hs
+ Main-Is: TestsMain.hs
  build-depends: base, test-framework, test-framework-quickcheck2, test-framework-hunit, QuickCheck, HUnit
 
 Library

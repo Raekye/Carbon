@@ -1,4 +1,4 @@
-module DataStructures.Trees.SelfBalancingBinaryTree (Tree, create, remove, removeall, count, find, size, height, add, prettyprint, rotate_cw, rotate_ccw) where
+module DataStructures.Trees.SelfBalancingBinaryTree (Tree (..), create, remove, removeall, count, find, size, height, add, prettyprint, rotate_cw, rotate_ccw) where
 
 import Prelude hiding (Left, Right)
 
@@ -23,13 +23,20 @@ balance (Branch left node right n h)
 	= let
 		factor = balance_factor (Branch left node right n h)
 		sub_factor
-			| factor > 0 = balance_factor new_right
-			| factor < 0 = balance_factor new_left
+			| factor > 0 = balance_factor right
+			| factor < 0 = balance_factor left
 			| otherwise = 0
-		in case factor of
-			-2 -> if (sub_factor == -1) then Leaf else Leaf
-			2 -> if (sub_factor == 1) then Leaf else Leaf
+		in if (factor /= 2 && factor /= -2)
+			then (Branch left node right n h)
+			else
+				let (new_left, new_right)
+					| factor * sub_factor > 0 = (left, right)
+					| factor == 2 = (left, (rotate right factor))
+					| otherwise = ((rotate left factor), right)
+				in rotate (Branch new_left node new_right n ((max (height new_left) (height new_right)) + 1)) sub_factor
 balance (Leaf) = Leaf
+
+side (Branch left node right n h) s = if (s > 0) then right else left
 
 remove (Branch left node right n h) val
 	| ((val == node) && (n == 1)) = removeall (Branch left node right n h) val
@@ -45,7 +52,7 @@ removeall (Branch left node right n h) val
 		where (new_left, new_right, new_n)
 			| val < node = ((removeall left val), right, n)
 			| val > node = (left, (removeall right val), n)
-			| otherwise = (Leaf, Leaf, 0) -- TODO
+			| otherwise = (left, right, 0) -- TODO: remove the node when deleted
 removeall (Leaf) val = Leaf
 
 clear (Branch left node right n h) = Leaf
@@ -69,18 +76,27 @@ size (Leaf) = 0
 height (Branch left node right n h) = h
 height (Leaf) = -1
 
-prettyprint (Branch left node right n h)
-	= (show node) ++ (prettyprint_helper left FIRST) ++ (prettyprint_helper right LAST)
+-- TODO: use pointfree notation
+-- see: http://stackoverflow.com/questions/12556469/nicely-printing-showing-a-binary-tree-in-haskell
 prettyprint (Leaf)
-	= "Empty tree."
-prettyprint_helper (Branch left node right n h) position
-	= (if position == FIRST then "\n" else "") ++ (show node) ++ (if position == LAST then "" else ", ") ++ (prettyprint_helper left position) ++ (prettyprint_helper right position)
-prettyprint_helper (Leaf) FIRST = "\n, "
-prettyprint_helper (Leaf) LAST = "."
-prettyprint_helper (Leaf) MIDDLE = ""
+	= "Empty root."
+prettyprint (Branch left node right n h) = unlines (prettyprint_helper (Branch left node right n h))
+prettyprint_helper (Branch left node right n h)
+	= (show node) : (prettyprint_subtree left right)
+		where
+			prettyprint_subtree left right =
+				((pad "+- " "|  ") (prettyprint_helper right)) ++ ((pad "`- " "   ") (prettyprint_helper left))
+			pad first rest = zipWith (++) (first : repeat rest)
+prettyprint_helper (Leaf)
+	= []
 
 balance_factor (Branch left node right n h) = (height right) - (height left)
 balance_factor (Leaf) = 0
+
+rotate (Branch left node right n h) rotation
+	| rotation > 0 = rotate_ccw (Branch left node right n h)
+	| rotation < 0 = rotate_cw (Branch left node right n h)
+	| otherwise = (Branch left node right n h)
 
 rotate_cw (Branch (Branch left_left left_node left_right left_n left_h) node right n h)
 	= Branch new_left left_node new_right left_n ((max (height new_left) (height new_right)) + 1)
