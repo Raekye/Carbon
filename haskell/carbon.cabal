@@ -4,7 +4,7 @@ Description: Implementation of random things in random languages
 License: MIT
 License-file: ../LICENSE
 Author: Raekye
-Maintainer: hmmmmmm
+Maintainer: adrian@creatifcubed.com
 bug-reports: https://github.com/Raekye/Carbon/issues
 Build-Type: Simple
 Cabal-Version: >=1.2
@@ -13,7 +13,7 @@ Test-Suite test
  type: exitcode-stdio-1.0
  Hs-Source-Dirs: src, testsuite/tests
  Main-Is: TestsMain.hs
- build-depends: base, test-framework, test-framework-quickcheck2, test-framework-hunit, QuickCheck, HUnit
+ build-depends: base, test-framework, test-framework-quickcheck2, test-framework-hunit, QuickCheck, HUnit, criterion
 
 Library
  Hs-Source-Dirs: src

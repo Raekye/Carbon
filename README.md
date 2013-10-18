@@ -31,6 +31,7 @@ Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements/cleanu
 
 ##### Self balancing binary tree (2)
 - Implementation of a multiset with a self balancing binary tree
+- TODO: benchmarking, remaining tests
 
 ##### Matrices and related math (1)
 - hmmmmm
@@ -41,12 +42,11 @@ Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements/cleanu
 
 ##### Priority queue (0)
 
-### Todo
-- self balancing binary tree
-- graph
-- heap
-- tests
-- matrices
+##### Todo
+- ci server
+
+### Goals
+- use more functional paradigm (e.g. fold instead of loop)
 
 ### Resources
 - [List of data structures][1]

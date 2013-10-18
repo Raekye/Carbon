@@ -68,7 +68,7 @@ class MatrixTest < Test::Unit::TestCase
 		rows = []
 		sub_list = []
 		(0...36).each do |i|
-			if i > 0 and i % 6 == 0
+			if i > 0 && i % 6 == 0
 				rows.push(sub_list)
 				sub_list = []
 			end
@@ -81,6 +81,27 @@ class MatrixTest < Test::Unit::TestCase
 
 	def test_inverse
 
+	end
+
+	def test_sub_matrix
+		matrix_c = @@matrix_a.sub_matrix([0], [0])
+		assert_equal([Vector.new([5, 6])], matrix_c.cols)
+	end
+
+	def test_insert_row
+		matrix_c = @@matrix_b.insert_row(-1, Vector.new([1, 2, 3]))
+		assert_equal([Vector.new([7, 9, 2]), Vector.new([8, 1, 3]), Vector.new([1, 2, 3])], matrix_c.rows)
+		assert_raise(ArgumentError) {
+			matrix_c.insert_col(0, Vector.new([]))
+		}
+	end
+
+	def test_insert_col
+		matrix_c = @@matrix_a.insert_col(0, Vector.new([-1, -2, -3]))
+		assert_equal([Vector.new([-1, -2, -3]), Vector.new([1, 2, 3]), Vector.new([4, 5, 6])], matrix_c.cols)
+		assert_raise(ArgumentError) {
+			matrix_c.insert_row(0, Vector.new([]))
+		}
 	end
 
 	def test_zero_matrix

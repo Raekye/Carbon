@@ -3,54 +3,46 @@ require_relative "Vector"
 class Matrix
 	@rows
 	@cols
-	def initialize(entries)
+	def initialize(entries, are_columns=true)
 		@rows = []
 		@cols = []
 		if entries.length == 0
-			return
+			raise ArgumentError
+		end
+		if entries[0].length == 0
+			raise ArgumentError
 		end
 		if entries[0].is_a? Array
-			len = entries[0].length
-			col_array = []
-			(1..len).each do
-				col_array.push([])
-			end
-			entries.each do |row|
-				if row.length != len
-					raise ArgumentError
-				end
-				row.each_with_index do |val, index|
-					if not val.is_a? Numeric
-						raise ArgumentError
-					end
-					col_array[index].push(val)
-				end
-				@rows.push(Vector.new(row))
-			end
-			col_array.each do |col|
-				@cols.push(Vector.new(col))
-			end
-		else
-			len = entries[0].length
-			row_array = []
-			(1..len).each do
-				row_array.push([])
-			end
+			entries = entries.map {|row| Vector.new(row) }
+			are_columns = false
+		end
+		transpose_arr = Matrix.transpose_vector_array(entries)
+		if are_columns
 			@cols = entries.dup
-			@cols.each do |col|
-				if col.length != len
-					raise ArgumentError
-				end
-				col.entries.each_with_index do |val, index|
-					row_array[index].push(val)
-				end
-			end
-			row_array.each do |row|
-				@rows.push(Vector.new(row))
-			end
+			@rows = transpose_arr
+		else
+			@rows = entries.dup
+			@cols = transpose_arr
 		end
 		@rows.freeze
 		@cols.freeze
+	end
+
+	def self.transpose_vector_array(vectors)
+		len = vectors[0].length
+		transpose_arr = []
+		(0...len).each do
+			transpose_arr.push([])
+		end
+		vectors.each do |vec|
+			if vec.length != len
+				raise ArgumentError
+			end
+			vec.entries.each_with_index do |val, index|
+				transpose_arr[index].push(val)
+			end
+		end
+		return transpose_arr.map { |entries| Vector.new(entries) }
 	end
 
 	def is_row_vector
@@ -134,9 +126,6 @@ class Matrix
 		if !self.is_square_matrix
 			raise RuntimeError, "Determinant of non-square matrix"
 		end
-		if @rows.length == 0
-			return 0 # TODO: meaning of 0 by 0 matrix?
-		end
 		if @rows.length == 1
 			return self.get(0, 0)
 		end
@@ -169,6 +158,24 @@ class Matrix
 			end
 			new_cols.push(Vector.new(new_vec_entries))
 		end
+		return Matrix.new(new_cols)
+	end
+
+	def insert_row(index, vec)
+		if vec.length != @cols.length
+			raise ArgumentError
+		end
+		new_rows = @rows.dup
+		new_rows.insert(index, vec)
+		return Matrix.new(new_rows, false)
+	end
+
+	def insert_col(index, vec)
+		if vec.length != @rows.length
+			raise ArgumentError
+		end
+		new_cols = @cols.dup
+		new_cols.insert(index, vec)
 		return Matrix.new(new_cols)
 	end
 
