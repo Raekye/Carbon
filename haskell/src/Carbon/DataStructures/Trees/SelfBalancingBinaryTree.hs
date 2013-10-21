@@ -1,4 +1,4 @@
-module DataStructures.Trees.SelfBalancingBinaryTree (Tree (..), create, remove, removeall, count, find, size, height, add, prettyprint, rotate_cw, rotate_ccw) where
+module Carbon.DataStructures.Trees.SelfBalancingBinaryTree (Tree (..), create, remove, removeall, count, find, size, height, add, prettyprint, rotate_cw, rotate_ccw) where
 
 import Prelude hiding (Left, Right)
 

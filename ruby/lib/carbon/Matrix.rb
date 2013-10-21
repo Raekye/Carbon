@@ -1,8 +1,8 @@
 require_relative "Vector"
 
 class Matrix
-	@rows
-	@cols
+	@rows # rowspace
+	@cols # colspace
 	def initialize(entries, are_columns=true)
 		@rows = []
 		@cols = []

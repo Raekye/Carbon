@@ -11,7 +11,7 @@ Implementations of data structures and algorithms in various languages for educa
 ##### Haskell
 - Install the [Haskell Platform][6]. This should include [Cabal-Install][7]
 - Run `cabal-update`
-- In the `haskell` directory, run `cabal install`. This will download dependencies such as HUnit
+- TODO: quick way to download dependencies?
 
 ##### Erlang
 - Install [rebar][8]
@@ -29,21 +29,29 @@ Implementations of data structures and algorithms in various languages for educa
 ### What I'm working on
 Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements/cleanup. 3 stable.
 
-##### Self balancing binary tree (2)
+##### Self balancing binary search tree (2)
 - Implementation of a multiset with a self balancing binary tree
+- Balanced with rotations only when neededs
 - TODO: benchmarking, remaining tests
 
 ##### Matrices and related math (1)
-- hmmmmm
+- Matrices model with related mathematical operations/concepts (e.g. vectors, matrix multiplication, row reduction)
 
-##### Heap (0)
+##### Binary Heap (1)
+- Implementation of a binary max heap
+- Bubble-down insertion to avoid extra tree traversal (instead of traversing to the bottom, then bubbling up)
+- TODO: generalize max/min heap, comparison function?
 
-##### Graph (0)
+##### Graph (Adjacency List) (1)
 
-##### Priority queue (0)
+##### Priority queue (1)
+
+##### Merge sort, Quicksort, Selection sort, Insertion sort (0)
 
 ##### Todo
 - ci server
+- add carbon namespace
+- rename self balancing binary search tree
 
 ### Goals
 - use more functional paradigm (e.g. fold instead of loop)
