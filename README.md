@@ -22,6 +22,7 @@ Implementations of data structures and algorithms in various languages for educa
 
 ##### Haskell
 - `cabal configure --enable-tests && cabal build && cabal test`
+- `cabal configure --enable-benchmarks && cabal build && cabal bench`
 
 ##### Erlang
 - `rebar compile eunit`
@@ -55,6 +56,10 @@ Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements/cleanu
 
 ### Goals
 - use more functional paradigm (e.g. fold instead of loop)
+
+### Challenges
+- avoiding extra tree traversals in a functional language
+- writing a generic print binary tree function (with a single traversal)
 
 ### Resources
 - [List of data structures][1]

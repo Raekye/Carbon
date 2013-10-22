@@ -9,7 +9,7 @@ import qualified Carbon.DataStructures.Trees.SelfBalancingBinaryTree as Tree
 import Data.List
 
 create_tree n = foldl' (\ tree val -> (Tree.add tree val)) Tree.create [1..n]
-max_size = (truncate (2 ** 16))
+max_size = (truncate (2 ** 8))
 
 tests :: [Test]
 tests = [ test_a

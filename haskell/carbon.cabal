@@ -13,7 +13,13 @@ Test-Suite test
  type: exitcode-stdio-1.0
  Hs-Source-Dirs: src, testsuite/tests
  Main-Is: TestsMain.hs
- build-depends: base, test-framework, test-framework-quickcheck2, test-framework-hunit, QuickCheck, HUnit, criterion
+ build-depends: base, test-framework, test-framework-quickcheck2, test-framework-hunit, QuickCheck, HUnit
+
+benchmark bench-builder-all
+ type: exitcode-stdio-1.0
+ hs-source-dirs: src, testsuite/benchmarks
+ main-is BenchMain.hs
+ build-depends: base, criterion
 
 Library
  Hs-Source-Dirs: src

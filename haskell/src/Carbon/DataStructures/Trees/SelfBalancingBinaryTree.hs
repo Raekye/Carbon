@@ -1,13 +1,20 @@
+{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies #-}
+
 module Carbon.DataStructures.Trees.SelfBalancingBinaryTree (Tree (..), create, remove, removeall, count, find, size, height, add, prettyprint, rotate_cw, rotate_ccw) where
 
-import Prelude hiding (Left, Right)
+import qualified Carbon.DataStructures.Trees.GenericBinaryTree as GenericBinaryTree
 
 data Tree a
 	= Branch (Tree a) a (Tree a) Int Int
 	| Leaf
 	deriving (Show)
 
-data TreePosition = FIRST | MIDDLE | LAST deriving (Eq)
+instance GenericBinaryTree.GenericBinaryTree Tree where
+	is_leaf Leaf = True
+	is_leaf _ = False
+	left (Branch left node right n h) = left
+	right (Branch left node right n h) = right
+	node (Branch left node right n h) = node
 
 create = Leaf
 
@@ -76,19 +83,9 @@ size (Leaf) = 0
 height (Branch left node right n h) = h
 height (Leaf) = -1
 
--- TODO: use pointfree notation
--- see: http://stackoverflow.com/questions/12556469/nicely-printing-showing-a-binary-tree-in-haskell
-prettyprint (Leaf)
-	= "Empty root."
-prettyprint (Branch left node right n h) = unlines (prettyprint_helper (Branch left node right n h))
-prettyprint_helper (Branch left node right n h)
-	= (show node) : (prettyprint_subtree left right)
-		where
-			prettyprint_subtree left right =
-				((pad "+- " "|  ") (prettyprint_helper right)) ++ ((pad "`- " "   ") (prettyprint_helper left))
-			pad first rest = zipWith (++) (first : repeat rest)
-prettyprint_helper (Leaf)
-	= []
+prettyprint :: Show a => Tree a -> String
+prettyprint (Leaf) = "{}"
+prettyprint (Branch left node right n h) = GenericBinaryTree.prettyprint (Branch left node right n h)
 
 balance_factor (Branch left node right n h) = (height right) - (height left)
 balance_factor (Leaf) = 0
