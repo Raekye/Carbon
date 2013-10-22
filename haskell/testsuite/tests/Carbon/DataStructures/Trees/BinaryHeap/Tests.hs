@@ -9,7 +9,7 @@ import qualified Carbon.DataStructures.Trees.BinaryHeap as Tree
 import Data.List
 
 create_tree n = foldl' (\ tree val -> (Tree.insert tree val)) Tree.create [1..n]
-max_size = (truncate (2 ** 8))
+max_size = (truncate (2 ^ 8))
 
 tests :: [Test]
 tests = [ test_a

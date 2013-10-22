@@ -67,6 +67,7 @@ Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements/cleanu
 - [Real World Haskell (book)][3]
 - [Haskell Cabal Testing][4]
 - [Snap Framework][5]
+- [Bytestring][9]
 
 [1]: http://en.wikipedia.org/wiki/List_of_data_structures
 [2]: http://en.wikipedia.org/wiki/List_of_algorithms#Sequence_Sorting
@@ -76,3 +77,4 @@ Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements/cleanu
 [6]: http://www.haskell.org/platform/linux.html
 [7]: http://www.haskell.org/haskellwiki/Cabal-Install
 [8]: https://github.com/basho/rebar
+[9]: https://github.com/ghc/packages-bytestring

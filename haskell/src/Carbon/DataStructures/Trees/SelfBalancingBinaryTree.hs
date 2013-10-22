@@ -66,9 +66,9 @@ clear (Branch left node right n h) = Leaf
 clear (Leaf) = Leaf
 
 count (Branch left node right n h) val
-	| node == val = n
+	| val == node = n
 	| val > node = count right val
-	| val < node = count left val
+	| otherwise = count left val
 count (Leaf) val = 0
 
 find (Branch left node right n h) f
