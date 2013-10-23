@@ -1,11 +1,11 @@
-module Carbon.DataStructures.Trees.SelfBalancingBinaryTree.Tests (tests) where
+module Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree.Tests (tests) where
 
 import Test.QuickCheck
 import qualified Test.HUnit as HUnit
 import Test.Framework
 import Test.Framework.Providers.QuickCheck2
 import Test.Framework.Providers.HUnit
-import qualified Carbon.DataStructures.Trees.SelfBalancingBinaryTree as Tree
+import qualified Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree as Tree
 import Data.List
 
 create_tree n = foldl' (\ tree val -> (Tree.add tree val)) Tree.create [1..n]

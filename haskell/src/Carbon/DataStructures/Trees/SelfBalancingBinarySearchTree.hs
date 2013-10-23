@@ -1,8 +1,9 @@
 {-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies #-}
 
-module Carbon.DataStructures.Trees.SelfBalancingBinaryTree (Tree (..), create, remove, removeall, count, find, size, height, add, prettyprint, rotate_cw, rotate_ccw) where
+module Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree (Tree (..), create, remove, removeall, count, find, size, height, add, prettyprint, rotate_cw, rotate_ccw) where
 
 import qualified Carbon.DataStructures.Trees.GenericBinaryTree as GenericBinaryTree
+import Debug.Trace
 
 data Tree a
 	= Branch (Tree a) a (Tree a) Int Int
@@ -38,9 +39,9 @@ balance (Branch left node right n h)
 			else
 				let (new_left, new_right)
 					| factor * sub_factor > 0 = (left, right)
-					| factor == 2 = (left, (rotate right factor))
-					| otherwise = ((rotate left factor), right)
-				in rotate (Branch new_left node new_right n ((max (height new_left) (height new_right)) + 1)) sub_factor
+					| factor == 2 = (left, (rotate right sub_factor))
+					| otherwise = ((rotate left sub_factor), right)
+				in rotate (Branch new_left node new_right n ((max (height new_left) (height new_right)) + 1)) factor
 balance (Leaf) = Leaf
 
 side (Branch left node right n h) s = if (s > 0) then right else left

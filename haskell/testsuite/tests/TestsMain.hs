@@ -5,11 +5,11 @@ import qualified Test.HUnit as HUnit
 import Test.Framework
 import Test.Framework.Providers.QuickCheck2
 import Test.Framework.Providers.HUnit
-import qualified Carbon.DataStructures.Trees.SelfBalancingBinaryTree.Tests
+import qualified Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree.Tests
 import qualified Carbon.DataStructures.Trees.BinaryHeap.Tests
 
 main :: IO ()
-main = defaultMain [testGroup "Carbon.DataStructures.Trees.SelfBalancingBinaryTree.Tests" Carbon.DataStructures.Trees.SelfBalancingBinaryTree.Tests.tests
+main = defaultMain [testGroup "Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree.Tests" Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree.Tests.tests
 	, testGroup "Carbon.DataStructures.Trees.BinaryHeap.Tests" Carbon.DataStructures.Trees.BinaryHeap.Tests.tests
 	, testGroup "Stub" [tests_a]
 	]
