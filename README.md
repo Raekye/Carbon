@@ -28,31 +28,31 @@ Implementations of data structures and algorithms in various languages for educa
 - `rebar compile eunit`
 
 ### What I'm working on
-Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements/cleanup. 3 stable.
+Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements, cleanup, or minor additions. 3 stable.
 
 ##### Self balancing binary search tree (2)
 - Implementation of a multiset with a self balancing binary tree
 - Balanced with rotations only when neededs
-- TODO: benchmarking, remaining tests
+- TODO: benchmarking, remaining tests, active removal, to list, from list
 
 ##### Matrices and related math (1)
 - Matrices model with related mathematical operations/concepts (e.g. vectors, matrix multiplication, row reduction)
 
-##### Binary Heap (1)
+##### Binary heap (1)
 - Implementation of a binary max heap
 - Bubble-down insertion to avoid extra tree traversal (instead of traversing to the bottom, then bubbling up)
 - TODO: generalize max/min heap, comparison function?
 
-##### Graph (Adjacency List) (1)
+##### Graph (adjacency list) (1)
 
 ##### Priority queue (1)
 
-##### Merge sort, Quicksort, Selection sort, Insertion sort (0)
+##### Merge sort, quicksort, selection sort, insertion sort (0)
+
+##### Red black tree
 
 ##### Todo
 - ci server
-- add carbon namespace
-- rename self balancing binary search tree
 
 ### Goals
 - use more functional paradigm (e.g. fold instead of loop)
