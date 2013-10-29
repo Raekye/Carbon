@@ -9,8 +9,7 @@ Implementations of data structures and algorithms in various languages for educa
 - Install Rake (`gem install rake`)
 
 ##### Haskell
-- Install the [Haskell Platform][6]. This should include [Cabal-Install][7]
-- Run `cabal-update`
+- Run [`cabal-update`][7] (this should be included in the [Haskell Platform][6])
 - TODO: quick way to download dependencies?
 
 ##### Erlang
@@ -47,12 +46,15 @@ Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements, clean
 
 ##### Priority queue (1)
 
-##### Merge sort, quicksort, selection sort, insertion sort (0)
+##### Merge sort, quicksort, selection sort, insertion sort (1)
 
-##### Red black tree
+##### Red black tree (0)
+
+##### Introsort, timsort, heapsort, smoothsort (0)
 
 ##### Todo
-- ci server
+- sorting identify stable/unstable, time complexity, depth, etc.
+- erlang benchmarks
 
 ### Goals
 - use more functional paradigm (e.g. fold instead of loop)

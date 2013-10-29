@@ -1,11 +1,11 @@
 require_relative "Vector"
 
 class Matrix
-	@rows # rowspace
-	@cols # colspace
+	@rowspace
+	@colspace
 	def initialize(entries, are_columns=true)
-		@rows = []
-		@cols = []
+		@rowspace = []
+		@colspace = []
 		if entries.length == 0
 			raise ArgumentError
 		end
@@ -18,14 +18,14 @@ class Matrix
 		end
 		transpose_arr = Matrix.transpose_vector_array(entries)
 		if are_columns
-			@cols = entries.dup
-			@rows = transpose_arr
+			@colspace = entries.dup
+			@rowspace = transpose_arr
 		else
-			@rows = entries.dup
-			@cols = transpose_arr
+			@rowspace = entries.dup
+			@colspace = transpose_arr
 		end
-		@rows.freeze
-		@cols.freeze
+		@rowspace.freeze
+		@colspace.freeze
 	end
 
 	def self.transpose_vector_array(vectors)
@@ -46,40 +46,40 @@ class Matrix
 	end
 
 	def is_row_vector
-		return @rows.length == 1
+		return @rowspace.length == 1
 	end
 
 	def is_col_vector
-		return @cols.length == 1
+		return @colspace.length == 1
 	end
 
 	def is_square_matrix
-		return @rows.length == @cols.length
+		return @rowspace.length == @colspace.length
 	end
 
 	def cols
-		return @cols
+		return @colspace
 	end
 
 	def rows
-		return @rows
+		return @rowspace
 	end
 
 	def get(n, m)
-		if n < 0 or n >= @rows.length
+		if n < 0 or n >= @rowspace.length
 			raise IndexError
 		end
-		if m < 0 or m >= @cols.length
+		if m < 0 or m >= @colspace.length
 			raise IndexError
 		end
-		return @cols[m][n]
+		return @colspace[m][n]
 	end
 
 	def set(n, m, val)
-		if n < 0 or n >= @rows.length
+		if n < 0 or n >= @rowspace.length
 			raise IndexError
 		end
-		if m < 0 or m >= @cols.length
+		if m < 0 or m >= @colspace.length
 			raise IndexError
 		end
 		new_cols = self.cols.dup
@@ -88,14 +88,14 @@ class Matrix
 	end
 
 	def add(other)
-		if @rows.length != other.rows.length
+		if @rowspace.length != other.rowspace.length
 			raise ArgumentError
 		end
-		if @cols.length != other.cols.length
+		if @colspace.length != other.colspace.length
 			raise ArgumentError
 		end
 		sum_cols = []
-		@cols.each_with_index do |col, index|
+		@colspace.each_with_index do |col, index|
 			sum_cols.push(col.add(other.cols[index]))
 		end
 		return Matrix.new(sum_cols)
@@ -104,16 +104,16 @@ class Matrix
 	def multiply(other)
 		product_cols = []
 		if other.is_a? Numeric
-			@cols.each do |col|
+			@colspace.each do |col|
 				product_cols.push(col.multiply(other))
 			end
 		else
-			if @rows.length != other.cols.length
+			if @rowspace.length != other.colspace.length
 				raise ArgumentError
 			end
 			other.cols.each do |col|
 				vec_entries = []
-				@rows.each do |row|
+				@rowspace.each do |row|
 					vec_entries.push(row.dot(col))
 				end
 				product_cols.push(Vector.new(vec_entries))
@@ -126,14 +126,14 @@ class Matrix
 		if !self.is_square_matrix
 			raise RuntimeError, "Determinant of non-square matrix"
 		end
-		if @rows.length == 1
+		if @rowspace.length == 1
 			return self.get(0, 0)
 		end
-		if @rows.length == 2
+		if @rowspace.length == 2
 			return self.get(0, 0) * self.get(1, 1) - self.get(0, 1) * self.get(1, 0)
 		end
 		bottom_rows = self.sub_matrix([0], [])
-		return @cols.each_with_index.inject(0) { |sum, (elem, i)| sum + ((-1) ** i) * elem[0] * bottom_rows.sub_matrix([], [i]).determinant }
+		return @colspace.each_with_index.inject(0) { |sum, (elem, i)| sum + ((-1) ** i) * elem[0] * bottom_rows.sub_matrix([], [i]).determinant }
 	end
 
 	def inverse
@@ -148,7 +148,7 @@ class Matrix
 
 	def sub_matrix(remove_rows, remove_cols)
 		new_cols = []
-		@cols.each_with_index do |col, i|
+		@colspace.each_with_index do |col, i|
 			if remove_cols.index(i) != nil
 				next
 			end
@@ -162,28 +162,50 @@ class Matrix
 	end
 
 	def insert_row(index, vec)
-		if vec.length != @cols.length
+		if vec.length != @colspace.length
 			raise ArgumentError
 		end
-		new_rows = @rows.dup
+		new_rows = @rowspace.dup
 		new_rows.insert(index, vec)
 		return Matrix.new(new_rows, false)
 	end
 
 	def insert_col(index, vec)
-		if vec.length != @rows.length
+		if vec.length != @rowspace.length
 			raise ArgumentError
 		end
-		new_cols = @cols.dup
+		new_cols = @colspace.dup
 		new_cols.insert(index, vec)
 		return Matrix.new(new_cols)
 	end
 
+	def transpose
+		return Matrix.new(@rowspace)
+	end
+
+	def echelon_form
+		matrix = self
+		is_transposed = false
+		if @colspace.length > @rowspace.length
+			matrix = matrix.transpose
+			is_transposed = true
+		end
+
+		if is_transposed
+			matrix = matrix.transpose
+		end
+		return matrix
+	end
+
+	def rref
+		return nil
+	end
+
 	def ==(other)
-		if @cols.length != other.cols.length
+		if @colspace.length != other.colspace.length
 			return false
 		end
-		@cols.each_with_index do |col, index|
+		@colspace.each_with_index do |col, index|
 			if col != other.cols[index]
 				return false
 			end
