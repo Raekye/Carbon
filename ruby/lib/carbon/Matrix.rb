@@ -88,10 +88,10 @@ class Matrix
 	end
 
 	def add(other)
-		if @rowspace.length != other.rowspace.length
+		if @rowspace.length != other.rows.length
 			raise ArgumentError
 		end
-		if @colspace.length != other.colspace.length
+		if @colspace.length != other.cols.length
 			raise ArgumentError
 		end
 		sum_cols = []
@@ -108,7 +108,7 @@ class Matrix
 				product_cols.push(col.multiply(other))
 			end
 		else
-			if @rowspace.length != other.colspace.length
+			if @rowspace.length != other.cols.length
 				raise ArgumentError
 			end
 			other.cols.each do |col|
@@ -202,7 +202,7 @@ class Matrix
 	end
 
 	def ==(other)
-		if @colspace.length != other.colspace.length
+		if @colspace.length != other.cols.length
 			return false
 		end
 		@colspace.each_with_index do |col, index|
