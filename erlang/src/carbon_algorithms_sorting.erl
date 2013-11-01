@@ -1,6 +1,6 @@
 -module(carbon_algorithms_sorting).
 
--export([mergesort/2, quicksort/2, insertionsort/2, selectionsort/2, introsort/2, timsort/2, heapsort/2, smoothsort/2]).
+-export([mergesort/2, quicksort/2, insertionsort/2, selectionsort/2, introsort/2, timsort/2, heapsort/2, smoothsort/2, shuffle_list/1]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
@@ -33,7 +33,7 @@ mergesort_unpartition([LeftCar | LeftCdr], [RightCar | RightCdr], Compare) ->
 quicksort([], _) -> [];
 quicksort([X], _) -> [X];
 quicksort([Car | Cdr], Compare) ->
-	{Left, Right} = quicksort_partition(Cdr, fun (X) -> X < Car end, {[], []}),
+	{Left, Right} = quicksort_partition(Cdr, fun(X) -> X < Car end, {[], []}),
 	quicksort(Left, Compare) ++ [Car | quicksort(Right, Compare)].
 
 quicksort_partition([], _, Aggregate) -> Aggregate;
@@ -48,7 +48,7 @@ quicksort_partition([Car | Cdr], Test, {Left, Right}) ->
 insertionsort([], _) -> [];
 insertionsort([Car | Cdr], Compare) ->
 	Helper =
-		fun (Helper, Sorted, [Car | Cdr], Compare) ->
+		fun(Helper, Sorted, [Car | Cdr], Compare) ->
 			Helper(Helper, insert_into_sorted_list(Car, Sorted, Compare), Cdr, Compare);
 		(_, Sorted, [], _) ->
 			Sorted
@@ -87,30 +87,30 @@ heapsort(List, Compare) -> List.
 
 smoothsort(List, Compare) -> List.
 
+shuffle_list(List) -> [X || {_, X} <- lists:sort([{random:uniform(), N} || N <- List])].
+
 -ifdef(TEST).
 
 -define(LIST_SIZE, trunc(math:pow(2, 8))).
 
-shuffle(List) -> [X || {_, X} <- lists:sort([{random:uniform(), N} || N <- List])].
-
 mergesort_test() ->
 	SequentialList = lists:seq(1, ?LIST_SIZE),
-	ShuffledList = shuffle(SequentialList),
+	ShuffledList = shuffle_list(SequentialList),
 	?assertEqual(SequentialList, mergesort(ShuffledList, fun(A, B) -> A < B end)).
 
 quicksort_test() ->
 	SequentialList = lists:seq(1, ?LIST_SIZE),
-	ShuffledList = shuffle(SequentialList),
+	ShuffledList = shuffle_list(SequentialList),
 	?assertEqual(SequentialList, quicksort(ShuffledList, fun(A, B) -> A < B end)).
 
 insertionsort_test() ->
 	SequentialList = lists:seq(1, ?LIST_SIZE),
-	ShuffledList = shuffle(SequentialList),
+	ShuffledList = shuffle_list(SequentialList),
 	?assertEqual(SequentialList, insertionsort(ShuffledList, fun(A, B) -> A < B end)).
 
 selectionsort_test() ->
 	SequentialList = lists:seq(1, ?LIST_SIZE),
-	ShuffledList = shuffle(SequentialList),
+	ShuffledList = shuffle_list(SequentialList),
 	?assertEqual(SequentialList, selectionsort(ShuffledList, fun(A, B) -> A < B end)).
 
 -endif.

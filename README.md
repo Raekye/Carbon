@@ -55,6 +55,7 @@ Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements, clean
 ##### Todo
 - sorting identify stable/unstable, time complexity, depth, etc.
 - erlang benchmarks
+- rename new_ with prime notation
 
 ### Goals
 - use more functional paradigm (e.g. fold instead of loop)

@@ -2,23 +2,26 @@ module Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree.Benchmarks (ben
 
 import qualified Criterion.Main as Criterion
 import qualified Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree as Tree
+import qualified Carbon.DataStructures.Trees.GenericBinaryTree as GenericBinaryTree
+import qualified Carbon.DataStructures.Trees.NaturalTree as NaturalTree
 import Data.List
 import Debug.Trace
 import Data.List
 
-distributed_range :: Int -> [Int]
+distributed_range :: Integer -> [Integer]
 distributed_range n = map (\ x -> (truncate (sin (fromIntegral (x ^ 2)) * (fromIntegral n)))) [1..n]
 
-create_tree :: Int -> Tree.Tree Int
+create_tree :: Integer -> Tree.Tree Integer
 create_tree n = foldl' (\ tree val -> (Tree.add tree val)) Tree.create $ distributed_range n
 
-get_tree :: Int -> Tree.Tree Int
+get_tree :: Integer -> Tree.Tree Integer
 get_tree
 	= let
-		get_tree' n = trace ("Creating tree " ++ (show n)) $ create_tree n
-	in (map get_tree' [0 ..] !!)
+		get_tree' 0 = create_tree 0
+		get_tree' n = Tree.add (get_tree (n - 1)) n
+	in NaturalTree.index (fmap get_tree' NaturalTree.naturals)
 
-search_tree :: Int -> Int
+search_tree :: Integer -> Int
 search_tree n = Tree.count (get_tree n) n
 
 benchmark_function_with_values name fn values = map (\ x -> Criterion.bench (name ++ "-" ++ (show x)) (Criterion.whnf fn x)) values

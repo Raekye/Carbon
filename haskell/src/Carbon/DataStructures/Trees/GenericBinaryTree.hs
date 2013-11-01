@@ -1,5 +1,3 @@
-{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies #-}
-
 module Carbon.DataStructures.Trees.GenericBinaryTree (Tree (..), GenericBinaryTree (..), prettyprint) where
 
 data Tree a

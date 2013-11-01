@@ -1,5 +1,3 @@
-{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies #-}
-
 module Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree (Tree (..), create, remove, removeall, count, find, size, height, add, prettyprint, rotate_cw, rotate_ccw) where
 
 import qualified Carbon.DataStructures.Trees.GenericBinaryTree as GenericBinaryTree
