@@ -19,7 +19,7 @@ benchmark bench-builder-all
  type: exitcode-stdio-1.0
  hs-source-dirs: src, testsuite/benchmarks
  main-is: BenchmarksMain.hs
- build-depends: base, criterion
+ build-depends: base, deepseq, criterion
 
 Library
  Hs-Source-Dirs: src

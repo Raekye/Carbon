@@ -10,6 +10,7 @@ class GenericBinaryTree a where
 	left :: a b -> a b
 	right :: a b -> a b
 	node :: a b -> b
+	details :: a b -> String
 
 -- TODO: use pointfree notation
 -- see: http://stackoverflow.com/questions/12556469/nicely-printing-showing-a-binary-tree-in-haskell
@@ -22,7 +23,7 @@ prettyprint tree
 prettyprint_helper :: (GenericBinaryTree a, Show b) => a b -> [String]
 prettyprint_helper tree
 	| is_leaf tree = []
-	| otherwise = ("{" ++ (show (node tree)) ++ "}") : (prettyprint_subtree (left tree) (right tree))
+	| otherwise = ("{" ++ (show (node tree)) ++ "} {" ++ (details tree) ++ "}") : (prettyprint_subtree (left tree) (right tree))
 		where
 			prettyprint_subtree left right =
 				((pad " +-" " | ") (prettyprint_helper right)) ++ ((pad " `-" "   ") (prettyprint_helper left))

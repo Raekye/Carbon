@@ -1,7 +1,8 @@
-module Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree (Tree (..), create, remove, removeall, count, find, size, height, add, prettyprint, rotate_cw, rotate_ccw) where
+module Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree (Tree (..), create, from_list, to_list, remove, removeall, count, find, size, height, add, prettyprint, rotate_cw, rotate_ccw) where
 
 import qualified Carbon.DataStructures.Trees.GenericBinaryTree as GenericBinaryTree
 import Debug.Trace
+import Data.List (foldl')
 
 data Tree a
 	= Branch (Tree a) a (Tree a) Int Int
@@ -14,6 +15,12 @@ instance GenericBinaryTree.GenericBinaryTree Tree where
 	left (Branch left node right n h) = left
 	right (Branch left node right n h) = right
 	node (Branch left node right n h) = node
+	details (Branch _ _ _ n h) = "N: " ++ (show n) ++ "; H: " ++ (show h)
+
+from_list li = foldl' (\ tree val -> (add tree val)) create li
+
+to_list Leaf = []
+to_list (Branch left node right n h) = (to_list left) ++ (replicate n node) ++ (to_list right)
 
 create = Leaf
 
@@ -46,7 +53,7 @@ side (Branch left node right n h) s = if (s > 0) then right else left
 
 remove (Branch left node right n h) val
 	| ((val == node) && (n == 1)) = removeall (Branch left node right n h) val
-	| otherwise = Branch new_left node new_right new_n ((max (height new_left) (height new_right)) + 1) 
+	| otherwise = balance $ Branch new_left node new_right new_n ((max (height new_left) (height new_right)) + 1) 
 		where (new_left, new_right, new_n)
 			| val < node = ((remove left val), right, n)
 			| val > node = (left, (remove right val), n)
@@ -54,11 +61,24 @@ remove (Branch left node right n h) val
 remove (Leaf) val = Leaf
 
 removeall (Branch left node right n h) val
-	= Branch new_left node new_right new_n ((max (height new_left) (height new_right)) + 1)
-		where (new_left, new_right, new_n)
-			| val < node = ((removeall left val), right, n)
-			| val > node = (left, (removeall right val), n)
-			| otherwise = (left, right, 0) -- TODO: remove the node when deleted
+	= balance $ Branch new_left node new_right new_n ((max (height new_left) (height new_right)) + 1)
+		where (new_left, new_right, new_node, new_n)
+			| val < node = ((removeall left val), right, node, n)
+			| val > node = (left, (removeall right val), node, n)
+			| otherwise = let
+				pop_'root (Branch Leaf node Leaf n _) _ = (Leaf, (node, n))
+				pop_'root (Branch left node Leaf n _) 1 = (Leaf, (node, n))
+				pop_'root (Branch Leaf node right n _) 0 = (Leaf, (node, n))
+				pop_'root (Branch left node right n _) side
+					= let
+						ret = pop_'root (if side == 0 then left else right) side
+						(left', right') = if side == 0 then ((fst ret), right) else (left, (fst ret))
+					in (balance (Branch left' node right' (snd root') ((max (height left') (height right')) + 1)), (snd ret))
+				factor = balance_factor (Branch left node right n h)
+				ret = if factor < 0 then (pop_'root left 1) else (pop_'root right 0)
+				root' = snd ret
+				(left', right') = if factor < 0 then ((fst ret), right) else (left, (fst ret)) -- TODO: optimize branch with earlier call?
+			in (left', right', (fst root'), (snd root')) --(left, right, 0)
 removeall (Leaf) val = Leaf
 
 clear (Branch left node right n h) = Leaf

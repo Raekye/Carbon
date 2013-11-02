@@ -25,28 +25,31 @@ Implementations of data structures and algorithms in various languages for educa
 
 ##### Erlang
 - `rebar compile eunit`
+- `rebar compile && rebar escriptize && ./carbon_erlang`
 
 ### What I'm working on
 Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements, cleanup, or minor additions. 3 stable.
 
 ##### Self balancing binary search tree (2)
 - Implementation of a multiset with a self balancing binary tree
-- Balanced with rotations only when neededs
-- TODO: benchmarking, remaining tests, active removal, to list, from list
+- Balanced with rotations only when needed
+- TODO: benchmarking, remaining tests
 
 ##### Matrices and related math (1)
 - Matrices model with related mathematical operations/concepts (e.g. vectors, matrix multiplication, row reduction)
 
-##### Binary heap (1)
+##### Binary heap (2)
 - Implementation of a binary max heap
 - Bubble-down insertion to avoid extra tree traversal (instead of traversing to the bottom, then bubbling up)
+- Bubble up insertion to remove additional tree traversal (instead of recursing down, bubbling up, and bubbling down)
 - TODO: generalize max/min heap, comparison function?
 
 ##### Graph (adjacency list) (1)
 
 ##### Priority queue (1)
 
-##### Merge sort, quicksort, selection sort, insertion sort (1)
+##### Merge sort, quicksort, selection sort, insertion sort (2)
+- TODO: benchmarking, documentation
 
 ##### Red black tree (0)
 
