@@ -9,7 +9,10 @@ import qualified Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree as Tr
 import Data.List
 
 create_tree n = foldl' (\ tree val -> (Tree.add tree val)) Tree.create [1..n]
-max_size = (truncate (2 ^ 8))
+max_size = 2 ^ 8
+
+distribute_range :: Integer -> Integer
+distribute_range n = truncate $ (sin (fromIntegral (n ^ 2))) * (2 ** 32)
 
 tests :: [Test]
 tests = [ test_a
@@ -19,25 +22,33 @@ tests = [ test_a
 	]
 
 test_a :: Test
-test_a = testCase "SelfBalancingBinaryTree/test_a" $ HUnit.assertEqual "msg" "foo" "foo"
+test_a = testCase "SelfBalancingBinarySearchTree/test_a" $ HUnit.assertEqual "msg" "foo" "foo"
 
 prop_b :: Test
-prop_b = testProperty "SelfBalancingBinaryTree/prop_b" $ prop_b'
+prop_b = testProperty "SelfBalancingBinarySearchTree/prop_b" $ prop_b'
 
 prop_b' :: Int -> Bool
 prop_b' x = True
 
 prop_c ::Test
-prop_c = testProperty "SelfBalancingBinaryTree/prop_c" $ prop_c'
+prop_c = testProperty "SelfBalancingBinarySearchTree/prop_c" $ prop_c'
 
 prop_c' :: Int -> Property
 prop_c' n = (n > 0 && n < max_size) ==> (Tree.height (create_tree n)) == (truncate (logBase 2 (fromIntegral n)))
 
 prop_d :: Test
-prop_d = testProperty "SelfBalancingBinaryTree/prop_d" $ prop_d'
+prop_d = testProperty "SelfBalancingBinarySearchTree/prop_d" $ prop_d'
 
 prop_d' :: Int -> Property
 prop_d' n = (n < max_size) ==> validate_tree $ create_tree n
+
+-- insert and remove sequential, insert and remove distributed
+
+--prop_e :: Test
+--prop_e = testProperty "SelfBalancingBinarySearchTree/prop_e" $ prop_e'
+
+--prop_e' :: Int -> Property
+--prop_e' n = (n < max_size) ==> foldl' (\ )
 
 validate_tree (Tree.Branch Tree.Leaf node Tree.Leaf n h)
 	= (h == 0)
