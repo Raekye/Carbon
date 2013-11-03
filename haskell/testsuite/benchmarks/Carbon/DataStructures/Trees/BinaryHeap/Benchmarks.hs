@@ -3,9 +3,9 @@ module Carbon.DataStructures.Trees.BinaryHeap.Benchmarks (benchmarks, setup) whe
 import qualified Carbon.DataStructures.Trees.BinaryHeap as Tree
 import Carbon.DataStructures.Trees.BinaryHeap.Tests
 import Carbon.Testing
-import Data.List
-import Control.DeepSeq
 import Carbon.Benchmarking
+
+import Control.DeepSeq
 
 instance NFData (Tree.Tree a)
 

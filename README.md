@@ -9,8 +9,8 @@ Implementations of data structures and algorithms in various languages for educa
 - Install Rake (`gem install rake`)
 
 ##### Haskell
-- Run [`cabal-update`][7] (this should be included in the [Haskell Platform][6])
-- TODO: quick way to download dependencies?
+- Run [`cabal update`][7] (this should be included in the [Haskell Platform][6])
+- Run `cabal install --only-dependencies`
 
 ##### Erlang
 - Install [rebar][8]
@@ -25,7 +25,7 @@ Implementations of data structures and algorithms in various languages for educa
 
 ##### Erlang
 - `rebar compile eunit`
-- `rebar compile && rebar escriptize && ./carbon_erlang`
+- `rebar compile && rebar escriptize && ./carbon_erlang` (benchmarks)
 
 ### What I'm working on
 Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements, cleanup, or minor additions. 3 stable.
@@ -46,12 +46,15 @@ Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements, clean
 
 ##### Graph (adjacency list) (1)
 
-##### Priority queue (1)
+##### Priority queue (2)
+- Backed by binary heap
 
 ##### Merge sort, quicksort, selection sort, insertion sort (2)
 - TODO: benchmarking, documentation
 
 ##### Red black tree (0)
+
+##### Fibonacci heap (0)
 
 ##### Introsort, timsort, heapsort, smoothsort (0)
 

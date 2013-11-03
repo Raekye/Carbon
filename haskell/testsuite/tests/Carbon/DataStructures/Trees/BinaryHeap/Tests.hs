@@ -5,9 +5,12 @@ import qualified Test.HUnit as HUnit
 import Test.Framework
 import Test.Framework.Providers.QuickCheck2
 import Test.Framework.Providers.HUnit
+
 import qualified Carbon.DataStructures.Trees.BinaryHeap as Tree
 import qualified Carbon.DataStructures.Trees.NaturalTree as NaturalTree
 import Carbon.Testing
+
+import Debug.Trace
 
 max_size :: Integer
 max_size = 2 ^ 16
@@ -28,32 +31,30 @@ get_distributed_tree
 
 insert_tree :: Integer -> Tree.Tree Integer
 insert_tree n
-	= if n > 0 then (Tree.insert (get_tree (n - 1)) n) else get_tree 0
+	= Tree.insert (get_tree (n - 1)) n
 
 remove_tree :: Integer -> Tree.Tree Integer
 remove_tree n
-	= if n > 0 then (fst (Tree.remove (get_tree (n - 1)))) else get_tree 0
+	= fst . Tree.remove . get_tree $ n
 
 tests :: [Test]
 tests = [ test_a
 	, prop_height
-	, prop_valid
+	, prop_valid_insert
+	, prop_valid_remove
 	]
 
 test_a :: Test
 test_a = testCase "BinaryHeap/test_a" $ HUnit.assertEqual "msg" "foo" "foo"
 
 prop_height ::Test
-prop_height = testProperty "BinaryHeap/prop_height" $ prop_height'
+prop_height = testProperty "BinaryHeap/prop_height" $ \ x -> (x > 0 && x < max_size) ==> (Tree.height (get_tree x)) == (truncate . (logBase 2) . fromIntegral) x
 
-prop_height' :: Integer -> Property
-prop_height' n = (n > 0 && n < max_size) ==> (Tree.height (get_tree n)) == (truncate (logBase 2 (fromIntegral n)))
+prop_valid_insert :: Test
+prop_valid_insert = testProperty "BinaryHeap/prop_valid_insert" $ \ x -> (x > 0 && x < max_size) ==> validate_tree . insert_tree $ x
 
-prop_valid :: Test
-prop_valid = testProperty "BinaryHeap/prop_valid" $ prop_valid'
-
-prop_valid' :: Integer -> Property
-prop_valid' n = (n > 0 && n < max_size) ==> validate_tree $ get_tree n
+prop_valid_remove :: Test
+prop_valid_remove = testProperty "BinaryHeap/prop_valid_remove" $ \ x -> (x > 0 && x < max_size) ==> validate_tree . remove_tree $ x
 
 -- insert and remove sequential, insert and remove distributed
 

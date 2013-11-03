@@ -1,16 +1,10 @@
 module Carbon.DataStructures.Trees.BinaryHeap (HeapStrain (..), Tree (..), create, to_list, from_list, insert, remove, height, size) where
 
 import qualified Carbon.DataStructures.Trees.GenericBinaryTree as GenericBinaryTree
+
 import Data.List (foldl')
 import Prelude hiding (compare)
-
---data Tree a = Branch {
---		left :: Tree a
---		, node :: a
---		, right :: Tree a
---		, size :: Integer
---	} | Leaf {
---	} deriving (Show)
+import Debug.Trace
 
 data HeapStrain = Min | Max deriving (Show)
 
@@ -41,6 +35,7 @@ to_list (Branch left node right size strain)
 create :: HeapStrain -> Tree a
 create strain = (Leaf strain)
 
+-- | Is stable
 insert :: Ord a => Tree a -> a -> Tree a
 insert (Leaf strain) val = Branch (Leaf strain) val (Leaf strain) 1 strain
 insert (Branch left node right size strain) val
@@ -70,6 +65,7 @@ compare a b Max = a > b
 
 remove :: Ord a => Tree a -> (Tree a, Maybe a)
 remove (Leaf strain) = ((Leaf strain), Nothing)
+remove (Branch (Leaf _) node _ _ strain) = ((Leaf strain), Just node)
 remove (Branch left node right size_num strain)
 	= let
 		pop_latest (Branch (Leaf _) node (Leaf _) _ strain) = ((Leaf strain), node)

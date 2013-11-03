@@ -5,12 +5,18 @@ import qualified Test.HUnit as HUnit
 import Test.Framework
 import Test.Framework.Providers.QuickCheck2
 import Test.Framework.Providers.HUnit
+
 import qualified Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree as Tree
-import Carbon.Testing
 import qualified Carbon.DataStructures.Trees.NaturalTree as NaturalTree
+import Carbon.Testing
+
+import Debug.Trace
 
 max_size :: Integer
 max_size = 2 ^ 16
+
+golden_ratio :: Double
+golden_ratio = (1 + (sqrt 5)) / 2
 
 get_tree :: Integer -> Tree.Tree Integer
 get_tree
@@ -43,8 +49,7 @@ prop_height ::Test
 prop_height = testProperty "SelfBalancingBinarySearchTree/prop_height" $ prop_height'
 
 prop_height' :: Integer -> Property
-prop_height' n = (n > 0 && n < max_size) ==> (Tree.height (get_tree n)) == (truncate (logBase 2 (fromIntegral n)))
-
+prop_height' n = (n > 0 && n < max_size) ==> Tree.height (get_tree n) <= ((truncate . (logBase golden_ratio)) ((sqrt 5) * (fromIntegral (n + 2)))) - 2
 prop_valid :: Test
 prop_valid = testProperty "SelfBalancingBinarySearchTree/prop_valid" $ prop_valid'
 

@@ -133,6 +133,7 @@ class Matrix
 			return self.get(0, 0) * self.get(1, 1) - self.get(0, 1) * self.get(1, 0)
 		end
 		bottom_rows = self.sub_matrix([0], [])
+		# Didn't use cofactor to avoid recreating the bottom rows matrix for every column
 		return @colspace.each_with_index.inject(0) { |sum, (elem, i)| sum + ((-1) ** i) * elem[0] * bottom_rows.sub_matrix([], [i]).determinant }
 	end
 
@@ -144,6 +145,10 @@ class Matrix
 			return nil
 		end
 		return self
+	end
+
+	def co_factor(i, j)
+		return ((-1) ** (i + j)) + self.sub_matrix(i, j).determinant
 	end
 
 	def sub_matrix(remove_rows, remove_cols)
