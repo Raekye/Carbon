@@ -11,7 +11,7 @@ import Control.Exception
 import Control.DeepSeq
 import Debug.Trace
 
-criterion_config = Criterion.Config.defaultConfig { Criterion.Config.cfgReport = Criterion.Config.ljust "dist/build/bench-builder-all/carbon-benchmarks.html" }
+criterion_config = Criterion.Config.defaultConfig { Criterion.Config.cfgReport = Criterion.Config.ljust "dist/build/bench-builder-all/carbon-haskell-benchmarks.html" }
 
 main = do
 	evaluate Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree.Benchmarks.setup
