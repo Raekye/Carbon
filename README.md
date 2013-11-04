@@ -40,8 +40,8 @@ Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements, clean
 
 ##### Binary heap (2)
 - Implementation of a binary max heap
-- Bubble-down insertion to avoid extra tree traversal (instead of traversing to the bottom, then bubbling up)
-- Bubble up insertion to remove additional tree traversal (instead of recursing down, bubbling up, and bubbling down)
+- insertion only traverses (one path of the) tree once (`log(n)`)
+- removal only travels (one path of the) tree twice (necessary to retrieve the latest node and bubble down) (`2logn`)
 - TODO: generalize max/min heap, comparison function?
 
 ##### Graph (adjacency list) (1)

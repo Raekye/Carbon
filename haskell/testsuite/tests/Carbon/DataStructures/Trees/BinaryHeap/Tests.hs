@@ -1,4 +1,4 @@
-module Carbon.DataStructures.Trees.BinaryHeap.Tests (tests, max_size, get_tree, get_distributed_tree, insert_tree, remove_tree) where
+module Carbon.DataStructures.Trees.BinaryHeap.Tests (tests) where
 
 import Test.QuickCheck
 import qualified Test.HUnit as HUnit
@@ -7,41 +7,15 @@ import Test.Framework.Providers.QuickCheck2
 import Test.Framework.Providers.HUnit
 
 import qualified Carbon.DataStructures.Trees.BinaryHeap as Tree
-import qualified Carbon.DataStructures.Trees.NaturalTree as NaturalTree
-import Carbon.Testing
+import Carbon.DataStructures.Trees.BinaryHeap.Scaffolding
 
 import Debug.Trace
-
-max_size :: Integer
-max_size = 2 ^ 16
-
-get_tree :: Integer -> Tree.Tree Integer
-get_tree
-	= let
-		get_tree' 0 = Tree.create Tree.Max
-		get_tree' n = Tree.insert (get_tree (n - 1)) n
-	in NaturalTree.index (fmap get_tree' NaturalTree.naturals)
-
-get_distributed_tree :: Integer -> Tree.Tree Integer
-get_distributed_tree
-	= let
-		get_tree' 0 = Tree.create Tree.Max
-		get_tree' n = Tree.insert (get_tree (distribute_range n)) n
-	in NaturalTree.index (fmap get_tree' NaturalTree.naturals)
-
-insert_tree :: Integer -> Tree.Tree Integer
-insert_tree n
-	= Tree.insert (get_tree (n - 1)) n
-
-remove_tree :: Integer -> Tree.Tree Integer
-remove_tree n
-	= fst . Tree.remove . get_tree $ n
 
 tests :: [Test]
 tests = [ test_a
 	, prop_height
-	, prop_valid_insert
-	, prop_valid_remove
+	, prop_insert
+	, prop_remove
 	]
 
 test_a :: Test
@@ -50,13 +24,17 @@ test_a = testCase "BinaryHeap/test_a" $ HUnit.assertEqual "msg" "foo" "foo"
 prop_height ::Test
 prop_height = testProperty "BinaryHeap/prop_height" $ \ x -> (x > 0 && x < max_size) ==> (Tree.height (get_tree x)) == (truncate . (logBase 2) . fromIntegral) x
 
-prop_valid_insert :: Test
-prop_valid_insert = testProperty "BinaryHeap/prop_valid_insert" $ \ x -> (x > 0 && x < max_size) ==> validate_tree . insert_tree $ x
+prop_insert :: Test
+prop_insert = testProperty "BinaryHeap/prop_insert" $ \ x -> (x > 0 && x < max_size) ==> validate_tree . insert_tree $ x
 
-prop_valid_remove :: Test
-prop_valid_remove = testProperty "BinaryHeap/prop_valid_remove" $ \ x -> (x > 0 && x < max_size) ==> validate_tree . remove_tree $ x
+prop_remove :: Test
+prop_remove = testProperty "BinaryHeap/prop_remove" $ \ x -> (x > 0 && x < max_size) ==> validate_tree . remove_tree $ x
 
--- insert and remove sequential, insert and remove distributed
+prop_insert_distributed :: Test
+prop_insert_distributed = testProperty "BinaryHeap/prop_insert_distributed" $ \ x -> (x > 0 && x < max_size) ==> validate_tree . get_distributed_tree $ x
+
+prop_remove_distributed :: Test
+prop_remove_distributed = testProperty "BinaryHeap/prop_remove_distributed" $ \ x -> (x > 0 && x < max_size) ==> validate_tree . fst . Tree.remove . get_distributed_tree $ x
 
 validate_tree :: (Ord a) => Tree.Tree a -> Bool
 validate_tree (Tree.Leaf _) = True

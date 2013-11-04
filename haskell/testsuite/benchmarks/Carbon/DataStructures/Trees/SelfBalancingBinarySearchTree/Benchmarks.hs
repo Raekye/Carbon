@@ -1,8 +1,7 @@
 module Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree.Benchmarks (benchmarks, setup) where
 
 import qualified Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree as Tree
-import Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree.Tests
-import Carbon.Testing
+import Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree.Scaffolding
 import Carbon.Benchmarking
 
 import Control.DeepSeq

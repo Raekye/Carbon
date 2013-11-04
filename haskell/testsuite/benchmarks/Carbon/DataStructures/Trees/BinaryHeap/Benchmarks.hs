@@ -1,8 +1,7 @@
 module Carbon.DataStructures.Trees.BinaryHeap.Benchmarks (benchmarks, setup) where
 
 import qualified Carbon.DataStructures.Trees.BinaryHeap as Tree
-import Carbon.DataStructures.Trees.BinaryHeap.Tests
-import Carbon.Testing
+import Carbon.DataStructures.Trees.BinaryHeap.Scaffolding
 import Carbon.Benchmarking
 
 import Control.DeepSeq

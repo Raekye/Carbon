@@ -38,17 +38,14 @@ create strain = (Leaf strain)
 -- | Is stable
 insert :: Ord a => Tree a -> a -> Tree a
 insert (Leaf strain) val = Branch (Leaf strain) val (Leaf strain) 1 strain
-insert (Branch left node right size strain) val
-	= bubble_down (Branch left node right size strain) val
-
-bubble_down :: Ord a => Tree a -> a -> Tree a
-bubble_down (Leaf strain) val = insert (Leaf strain) val
-bubble_down (Branch left node right size_num strain) val
+insert (Branch left node right size_num strain) val
 	= let
-		(bubble_down_val, val') = if (compare val node strain) then (node, val) else (val, node)
 		next = derive_side_from_size size_num
-		(left', right') = if (next == 0) then ((bubble_down left bubble_down_val), right) else (left, (bubble_down right bubble_down_val))
-	in (Branch left' val' right' ((size left') + (size right') + 1) strain)
+		(Branch subtree_left subtree_node subtree_right subtree_size _) = if next == 0 then (insert left val) else (insert right val)
+		(node', subtree_node') = if (compare subtree_node node strain) then (subtree_node, node) else (node, subtree_node)
+		subtree' = (Branch subtree_left subtree_node' subtree_right subtree_size strain)
+		(left', right') = if next == 0 then (subtree', right) else (left, subtree')
+	in (Branch left' node' right' ((size left') + (size right') + 1) strain)
 
 derive_side_from_size :: Integer -> Int
 derive_side_from_size size
@@ -58,28 +55,35 @@ derive_side_from_size size
 		factor = (mod (size - max_children_in_bottom_row + 1) max_children_in_bottom_row)
 	in if factor * 2 < max_children_in_bottom_row then 0 else 1
 
--- | returns true if the left element should bubble up
+-- | returns true if the left element should bubble up, weighted towards right elemnent
 compare :: (Ord a) => a -> a -> HeapStrain -> Bool
 compare a b Min = a < b
 compare a b Max = a > b
 
 remove :: Ord a => Tree a -> (Tree a, Maybe a)
 remove (Leaf strain) = ((Leaf strain), Nothing)
-remove (Branch (Leaf _) node _ _ strain) = ((Leaf strain), Just node)
 remove (Branch left node right size_num strain)
 	= let
-		pop_latest (Branch (Leaf _) node (Leaf _) _ strain) = ((Leaf strain), node)
-		pop_latest (Branch left node right size_num strain)
+		pop_latest (Branch (Leaf _) node (Leaf _) _ _) = ((Leaf strain), node)
+		pop_latest (Branch left node right size_num _)
 			= let
 				next = derive_side_from_size (size_num - 1)
-				(subtree, node') = if (next == 0) then (pop_latest left) else (pop_latest right)
-				(bubbling_node, settled_node) = if (compare node' node strain) then (node', node) else (node, node')
-				(left', right') = if (next == 0) then (subtree, right) else (left, subtree)
-			in ((Branch left' settled_node right' ((size left') + (size right') + 1) strain), bubbling_node)
-		side = derive_side_from_size (size_num - 1)
-		(subtree, node') = pop_latest (if side == 0 then left else right)
-		(left', right') = if side == 0 then (subtree, right) else (left, subtree) -- TODO: optimize with earlier branch?
-	in ((Branch left' node' right' ((size left') + (size right') + 1) strain), Just node)
+				(subtree, latest) = pop_latest $ if next == 0 then left else right
+				(left', right') = if next == 0 then (subtree, right) else (left, subtree)
+			in ((Branch left' node right' ((size left') + (size right') + 1) strain), latest)
+		(subtree, latest) = pop_latest (Branch left node right size_num strain)
+		bubble_down (Branch (Leaf _) node (Leaf _) size_num _)
+			= (Branch (Leaf strain) node (Leaf strain) size_num strain)
+		bubble_down (Branch (Branch left_left left_node left_right left_size_num _) node (Leaf _) size_num strain)
+			| compare left_node node strain = (Branch (bubble_down (Branch left_left node left_right left_size_num strain)) left_node (Leaf strain) size_num strain)
+			| otherwise = (Branch (Branch left_left left_node left_right left_size_num strain) node (Leaf strain) size_num strain)
+		bubble_down (Branch (Branch left_left left_node left_right left_size_num _) node (Branch right_left right_node right_right right_size_num _) size_num _)
+			| not (compare left_node right_node strain) = if (compare right_node node strain) then (Branch (Branch left_left left_node left_right left_size_num strain) right_node (bubble_down (Branch right_left node right_right right_size_num strain)) size_num strain) else (Branch (Branch left_left left_node left_right left_size_num strain) node (Branch right_left right_node right_right right_size_num strain) size_num strain)
+			| compare left_node node strain = (Branch (bubble_down (Branch left_left node left_right left_size_num strain)) left_node (Branch right_left right_node right_right right_size_num strain) size_num strain)
+			| otherwise = (Branch (Branch left_left left_node left_right left_size_num strain) node (Branch right_left right_node right_right right_size_num strain) size_num strain)
+	in case subtree of
+		(Branch subtree_left _ subtree_right subtree_size_num _) -> ((bubble_down (Branch subtree_left latest subtree_right subtree_size_num strain)), Just node)
+		(Leaf _) -> ((Leaf strain), Just node)
 
 height :: Tree a -> Integer
 height (Leaf _) = -1
