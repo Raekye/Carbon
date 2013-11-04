@@ -1,7 +1,9 @@
 module Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree (Tree (..), create, from_list, to_list, remove, removeall, count, find, size, height, add, prettyprint, rotate_cw, rotate_ccw) where
 
 import qualified Carbon.DataStructures.Trees.GenericBinaryTree as GenericBinaryTree
+
 import Data.List (foldl')
+import Debug.Trace
 
 data Tree a
 	= Branch (Tree a) a (Tree a) Int Int
@@ -67,20 +69,24 @@ remove (Branch left node right n h) val
 remove (Leaf) _ = Leaf
 
 removeall :: (Ord a) => Tree a -> a -> Tree a
+removeall (Branch Leaf node Leaf n h) val
+	| node == val = Leaf
+	| otherwise = (Branch Leaf node Leaf n h)
 removeall (Branch left node right n h) val
-	= balance $ Branch new_left node new_right new_n ((max (height new_left) (height new_right)) + 1)
+	= balance $ Branch new_left new_node new_right new_n ((max (height new_left) (height new_right)) + 1)
 		where (new_left, new_right, new_node, new_n)
 			| val < node = ((removeall left val), right, node, n)
 			| val > node = (left, (removeall right val), node, n)
 			| otherwise = let
+				pop_'root (Leaf) _ = trace "POP ROOT LEAF" (Leaf, (node, n))
 				pop_'root (Branch Leaf node Leaf n _) _ = (Leaf, (node, n))
-				pop_'root (Branch left node Leaf n _) 1 = (Leaf, (node, n))
-				pop_'root (Branch Leaf node right n _) 0 = (Leaf, (node, n))
+				pop_'root (Branch _ node Leaf n _) 1 = (Leaf, (node, n))
+				pop_'root (Branch Leaf node _ n _) 0 = (Leaf, (node, n))
 				pop_'root (Branch left node right n _) side
 					= let
 						ret = pop_'root (if side == 0 then left else right) side
 						(left', right') = if side == 0 then ((fst ret), right) else (left, (fst ret))
-					in (balance (Branch left' node right' (snd root') ((max (height left') (height right')) + 1)), (snd ret))
+					in (balance (Branch left' node right' n ((max (height left') (height right')) + 1)), (snd ret))
 				factor = balance_factor (Branch left node right n h)
 				ret = if factor < 0 then (pop_'root left 1) else (pop_'root right 0)
 				root' = snd ret

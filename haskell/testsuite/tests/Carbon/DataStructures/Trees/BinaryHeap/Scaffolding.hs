@@ -17,9 +17,9 @@ get_tree
 get_distributed_tree :: Integer -> Tree.Tree Integer
 get_distributed_tree
 	= let
-		get_tree' 0 = Tree.create Tree.Max
-		get_tree' n = Tree.insert (get_tree (distribute_range n)) n
-	in NaturalTree.index (fmap get_tree' NaturalTree.naturals)
+		get_distributed_tree' 0 = Tree.create Tree.Max
+		get_distributed_tree' n = Tree.insert (get_distributed_tree (n - 1)) (distribute_range n)
+	in NaturalTree.index (fmap get_distributed_tree' NaturalTree.naturals)
 
 insert_tree :: Integer -> Tree.Tree Integer
 insert_tree n

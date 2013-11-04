@@ -8,36 +8,35 @@ import Test.Framework.Providers.HUnit
 
 import qualified Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree as Tree
 import Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree.Scaffolding
+import Carbon.Testing
 
 import Debug.Trace
 
 tests :: [Test]
 tests = [ test_a
 	, prop_height
-	, prop_valid
+	, prop_insert
+	, prop_insert_distributed
+	, prop_remove_distributed
 	]
 
 test_a :: Test
 test_a = testCase "SelfBalancingBinarySearchTree/test_a" $ HUnit.assertEqual "msg" "foo" "foo"
 
 prop_height ::Test
-prop_height = testProperty "SelfBalancingBinarySearchTree/prop_height" $ prop_height'
+prop_height = testProperty "SelfBalancingBinarySearchTree/prop_height" $ \ x -> (x > 0 && x < max_size) ==> Tree.height (get_tree x) <= ((truncate . (logBase golden_ratio)) ((sqrt 5) * (fromIntegral (x + 2)))) - 2
 
-prop_height' :: Integer -> Property
-prop_height' n = (n > 0 && n < max_size) ==> Tree.height (get_tree n) <= ((truncate . (logBase golden_ratio)) ((sqrt 5) * (fromIntegral (n + 2)))) - 2
-prop_valid :: Test
-prop_valid = testProperty "SelfBalancingBinarySearchTree/prop_valid" $ prop_valid'
+prop_insert :: Test
+prop_insert = testProperty "SelfBalancingBinarySearchTree/prop_insert" $ \ x -> (x > 0 && x < max_size) ==> validate_tree $ get_tree x
 
-prop_valid' :: Integer -> Property
-prop_valid' n = (n > 0 && n < max_size) ==> validate_tree $ get_tree n
+prop_remove :: Test
+prop_remove = testProperty "SelfBalancingBinarySearchTree/prop_remove" $ \ x -> (x > 0 && x < max_size) ==> validate_tree $ get_tree x
 
--- insert and remove sequential, insert and remove distributed
+prop_insert_distributed :: Test
+prop_insert_distributed = testProperty "SelfBalancingBinarySearchTree/prop_insert_distributed" $ \ x -> (x > 0 && x < max_size) ==> validate_tree $ get_distributed_tree x
 
---prop_e :: Test
---prop_e = testProperty "SelfBalancingBinarySearchTree/prop_e" $ prop_e'
-
---prop_e' :: Integer -> Property
---prop_e' n = (n < max_size) ==> foldl' (\ )
+prop_remove_distributed :: Test
+prop_remove_distributed = testProperty "SelfBalancingBinarySearchTree/prop_remove_distributed" $ \ x -> (x > 0 && x < max_size) ==> validate_tree $ Tree.remove (get_distributed_tree x) (distribute_range x)
 
 validate_tree :: (Ord a) => Tree.Tree a -> Bool
 validate_tree (Tree.Branch Tree.Leaf node Tree.Leaf n h)

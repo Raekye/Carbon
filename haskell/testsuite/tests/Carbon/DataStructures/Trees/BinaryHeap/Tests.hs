@@ -16,6 +16,8 @@ tests = [ test_a
 	, prop_height
 	, prop_insert
 	, prop_remove
+	, prop_insert_distributed
+	, prop_remove_distributed
 	]
 
 test_a :: Test
