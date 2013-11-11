@@ -1,10 +1,13 @@
 -module(carbon_algorithms_sorting).
 
--export([mergesort/2, quicksort/2, insertionsort/2, selectionsort/2, introsort/2, timsort/2, heapsort/2, smoothsort/2, shuffle_list/1]).
+-export([mergesort/2, quicksort/2, insertionsort/2, selectionsort/2, introsort/2, timsort/2, heapsort/2, smoothsort/2, introsort/2, shuffle_list/1]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
 -endif.
+
+log2(X) ->
+	math:log(X) / math:log(2).
 
 mergesort([], _) -> [];
 mergesort([X], _) -> [X];
@@ -64,7 +67,7 @@ insert_into_sorted_list(Val, [Car | Cdr], Compare) ->
 
 selectionsort([], _) -> [];
 selectionsort([X], _) -> [X];
-selectionsort([Car | Cdr], Compare) -> 
+selectionsort([Car | Cdr], Compare) ->
 	{First, _, Rest} = selectionsort_separate([Car | Cdr], Compare, Car, 0, 0),
 	[First | selectionsort(Rest, Compare)].
 
@@ -78,12 +81,24 @@ selectionsort_separate([Car | Cdr], Compare, First, FirstIndex, I) ->
 	{FinalFirst, FinalFirstIndex, Rest} = selectionsort_separate(Cdr, Compare, NewFirst, NewFirstIndex, I + 1),
 	{FinalFirst, FinalFirstIndex, if I == FinalFirstIndex -> Rest; true -> [Car | Rest] end}.
 
-
-introsort(List, Compare) -> List.
+introsort([], _) -> [];
+introsort(List, Compare) ->
+	Helper =
+		fun(Helper, [Car | Cdr], Depth, Max) ->
+			if Depth > Max -> heapsort([Car | Cdr], Compare);
+				true ->
+					{Left, Right} = quicksort_partition(Cdr, fun(X) -> X < Car end, {[], []}),
+					Helper(Helper, Left, Depth + 1, Max) ++ [Car | Helper(Helper, Right, Depth + 1, Max)]
+			end;
+		(_, [], _, _) -> [];
+		(_, [Car], _, _) -> [Car]
+		end,
+	Helper(Helper, List, 0, trunc(log2(length(List)))).
 
 timsort(List, Compare) -> List.
 
-heapsort(List, Compare) -> List.
+heapsort(List, Compare) ->
+	mergesort(List, Compare).
 
 smoothsort(List, Compare) -> List.
 
@@ -112,5 +127,10 @@ selectionsort_test() ->
 	SequentialList = lists:seq(1, ?LIST_SIZE),
 	ShuffledList = shuffle_list(SequentialList),
 	?assertEqual(SequentialList, selectionsort(ShuffledList, fun(A, B) -> A < B end)).
+
+introsort_test() ->
+	SequentialList = lists:seq(1, ?LIST_SIZE),
+	ShuffledList = shuffle_list(SequentialList),
+	?assertEqual(SequentialList, introsort(ShuffledList, fun(A, B) -> A < B end)).
 
 -endif.

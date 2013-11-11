@@ -13,4 +13,5 @@ benchmarks() ->
 		{"Quicksort", fun(A, B) -> carbon_algorithms_sorting:quicksort(A, B) end, Args, ?ITERATIONS},
 		{"Insertion sort", fun(A, B) -> carbon_algorithms_sorting:insertionsort(A, B) end, Args, ?ITERATIONS},
 		{"Selection sort", fun(A, B) -> carbon_algorithms_sorting:selectionsort(A, B) end, Args, ?ITERATIONS}
+		{"Introsort", fun(A, B) -> carbon_algorithms_sorting:introsort(A, B) end, Args, ?ITERATIONS}
 	].
