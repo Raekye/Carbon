@@ -7,4 +7,5 @@
               {env,[]},
               {modules,[carbon_algorithms_benchmarks,
                         carbon_algorithms_sorting,carbon_benchmarking,
-                        carbon_erlang,carbon_erlang_app,carbon_erlang_sup]}]}.
+                        carbon_datastructures,carbon_erlang,carbon_erlang_app,
+                        carbon_erlang_sup]}]}.
