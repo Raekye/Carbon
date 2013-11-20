@@ -56,7 +56,9 @@ Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements, clean
 
 ##### Fibonacci heap (0)
 
-##### Introsort, timsort, heapsort, smoothsort (0)
+##### Introsort, timsort, heapsort, smoothsort (1)
+- introsort (done)
+- heapsort (with pairing heap)
 
 ##### Todo
 - sorting identify stable/unstable, time complexity, depth, etc.

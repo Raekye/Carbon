@@ -132,9 +132,54 @@ class Matrix
 		if @rowspace.length == 2
 			return self.get(0, 0) * self.get(1, 1) - self.get(0, 1) * self.get(1, 0)
 		end
-		bottom_rows = self.sub_matrix([0], [])
-		# Didn't use cofactor to avoid recreating the bottom rows matrix for every column
-		return @colspace.each_with_index.inject(0) { |sum, (elem, i)| sum + ((-1) ** i) * elem[0] * bottom_rows.sub_matrix([], [i]).determinant }
+		most_zeroes = 0
+		most_zeroes_index = 0
+		most_zeroes_is_row = true
+		@rowspace.each_with_index do |row, i|
+			num_zeroes = 0;
+			(0...row.length).each do |j|
+				if row[j] == 0
+					num_zeroes += 1
+				end
+			end
+			if num_zeroes > most_zeroes
+				most_zeroes = num_zeroes
+				most_zeroes_index = i
+			end
+		end
+		if most_zeroes < @colspace.length
+			@colspace.each_with_index do |col, i|
+				num_zeroes = 0
+				(0...col.length).each do |j|
+					if col[j] == 0
+						num_zeroes += 1
+					end
+				end
+				if num_zeroes > most_zeroes
+					most_zeroes = num_zeroes
+					most_zeroes_is_row = false
+				end
+			end
+		end
+		if most_zeroes_is_row
+			included_rows = self.delete_row(most_zeroes_index)
+			return @colspace.each_with_index.inject(0) do |sum, (elem, i)|
+				if elem[most_zeroes_index] == 0
+					sum
+				else
+					sum + ((-1) ** (most_zeroes_index + i)) * elem[most_zeroes_index] * included_rows.delete_col(i).determinant
+				end
+			end
+		else
+			included_cols = self.delete_col(most_zeroes_index)
+			return @rowspace.each_with_index.inject(0) do |sum, (elem, i)|
+				if elem[most_zeroes_index] == 0
+					sum
+				else
+					sum + ((-1) ** (most_zeroes_index + i)) * elem[most_zeroes_index] * included_cols.delete_row(i).determinant
+				end
+			end
+		end
 	end
 
 	def inverse
@@ -144,11 +189,12 @@ class Matrix
 		if self.determinant == 0
 			return nil
 		end
+
 		return self
 	end
 
 	def co_factor(i, j)
-		return ((-1) ** (i + j)) + self.sub_matrix(i, j).determinant
+		return ((-1) ** (i + j)) * self.sub_matrix(i, j).determinant
 	end
 
 	def sub_matrix(remove_rows, remove_cols)
@@ -184,8 +230,40 @@ class Matrix
 		return Matrix.new(new_cols)
 	end
 
+	def delete_row(index)
+		new_rows = @rowspace.dup
+		new_rows.delete_at(index)
+		return Matrix.new(new_rows, false)
+	end
+
+	def delete_col(index)
+		new_cols = @colspace.dup
+		new_cols.delete_at(index)
+		return Matrix.new(new_cols)
+	end
+
 	def transpose
 		return Matrix.new(@rowspace)
+	end
+
+	def echelon_form_operations
+		matrix, is_transposed = if @colspace.length > @rowspace.length then [self.transpose, true] else [self, false] end
+		operations = []
+		# case: first row starts with zero
+		(0...@colspace.length).each do |i|
+			if matrix.cols[i] == Vector.zero_vector(matrix.rows.length)
+				next
+			elsif matrix.get(i, i) == 0
+				if i == @colspace.length - 1
+					next
+				else
+					# make not zero
+				end
+			else
+				# add multiple
+			end
+		end
+		return (if is_transposed then matrix.transpose else matrix end)
 	end
 
 	def echelon_form
