@@ -60,6 +60,8 @@ Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements, clean
 - introsort (done)
 - heapsort (with pairing heap)
 
+##### Merkle tree (0)
+
 ##### Todo
 - sorting identify stable/unstable, time complexity, depth, etc.
 - erlang benchmarks
