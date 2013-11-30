@@ -34,20 +34,50 @@ neighbors (AdjacencyList nodes) a
 	in neighbors
 
 find_node :: (Ord a) => [Node a] -> a -> Node a
-find_node ((Node car neighbors) : cdr) a
-	= if car == a then (Node car neighbors) else (find_node cdr a)
-find_node [] _
+find_node nodes a
+	= let
+		(ret, _) = find_node_with_rest [] nodes a
+	in ret
+
+find_node_with_rest :: (Ord a) => [Node a] -> [Node a] -> a -> (Node a, ([Node a], [Node a]))
+find_node_with_rest prev ((Node car neighbors) : cdr) a
+	| car == a = (Node car neighbors, (prev, cdr))
+	| otherwise = find_node_with_rest ((Node car neighbors) : prev) cdr a
+find_node_with_rest _ [] _ = undefined
+
+find_first_of :: (Ord a) => [Node a] -> [Node a] -> a -> a -> ((Node a, a), ([Node a], [Node a]))
+find_first_of prev ((Node car neighbors) : cdr) a b
+	| car == a = (((Node car neighbors), b), (prev, cdr))
+	| car == b = (((Node car neighbors), a), (prev, cdr))
+	| otherwise = find_first_of ((Node car neighbors) : prev) cdr a b
+find_first_of _ [] _ _
 	= undefined
 
-add :: AdjacencyList a -> a -> a -> AdjacencyList a
+add :: (Ord a) => AdjacencyList a -> a -> a -> AdjacencyList a
 add (AdjacencyList nodes) a b
 	= let
-	in undefined
+		(((Node first neighbors), other), (prev, rest)) = find_first_of [] nodes a b
+		first' = case (elem other neighbors) of
+			True -> error "Edge already exists"
+			False -> (Node first (other : neighbors))
+		((Node _ other_neighbors), (prev', rest')) = find_node_with_rest prev rest other
+		other' = case (elem first other_neighbors) of
+			True -> error "Edge already exists"
+			False -> (Node other (first : other_neighbors))
+	in (AdjacencyList (first' : other' : (prev' ++ rest')))
 
-delete :: AdjacencyList a -> a -> a -> AdjacencyList a
+delete :: (Ord a) => AdjacencyList a -> a -> a -> AdjacencyList a
 delete (AdjacencyList nodes) a b
 	= let
-	in undefined
+		fold_fn_delete :: (Ord a) => a -> [a] -> a -> [a]
+		fold_fn_delete to_delete aggregate x
+			| x == to_delete = aggregate
+			| otherwise = x : aggregate
+		(((Node first neighbors), other), (prev, rest)) = find_first_of [] nodes a b
+		first' = (Node first (foldl' (fold_fn_delete other) [] neighbors))
+		((Node _ other_neighbors), (prev', rest')) = find_node_with_rest prev rest other
+		other' = (Node other (foldl' (fold_fn_delete first) [] other_neighbors))
+	in (AdjacencyList (first' : other' : (prev' ++ rest')))
 
 add_node :: AdjacencyList a -> a -> AdjacencyList a
 add_node (AdjacencyList nodes) added_node = (AdjacencyList ((Node added_node []) : nodes))
