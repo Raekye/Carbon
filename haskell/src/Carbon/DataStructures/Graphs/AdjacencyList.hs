@@ -1,9 +1,13 @@
-module Carbon.DataStructures.Graphs.AdjacencyList (AdjacencyList (..), create, are_adjacent, neighbors, add, delete, add_node, delete_node) where
+module Carbon.DataStructures.Graphs.AdjacencyList (AdjacencyList (..), Node (..), create, are_adjacent, neighbors, add, delete, add_node, delete_node) where
 
 import Data.List (foldl')
 import Data.Maybe (Maybe (Just, Nothing))
 
 data Node a = Node a [a]
+
+instance Eq a => Eq (Node a) where
+
+instance Show a => Show (Node a) where
 
 data AdjacencyList a = AdjacencyList [Node a]
 
@@ -79,8 +83,10 @@ delete (AdjacencyList nodes) a b
 		other' = (Node other (foldl' (fold_fn_delete first) [] other_neighbors))
 	in (AdjacencyList (first' : other' : (prev' ++ rest')))
 
-add_node :: AdjacencyList a -> a -> AdjacencyList a
-add_node (AdjacencyList nodes) added_node = (AdjacencyList ((Node added_node []) : nodes))
+add_node :: (Ord a) => AdjacencyList a -> a -> AdjacencyList a
+add_node (AdjacencyList nodes) added_node
+	| foldl' (\ aggregate (Node x _) -> aggregate || x == added_node) False nodes = (AdjacencyList nodes)
+	| otherwise = (AdjacencyList ((Node added_node []) : nodes))
 
 delete_node :: (Ord a) => AdjacencyList a -> a -> AdjacencyList a
 delete_node (AdjacencyList nodes) deleted_node

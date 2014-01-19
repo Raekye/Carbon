@@ -9,12 +9,14 @@ import qualified Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree.Tests
 import qualified Carbon.DataStructures.Trees.BinaryHeap.Tests
 import qualified Carbon.DataStructures.Queues.PriorityQueue.Tests
 import qualified Carbon.DataStructures.Graphs.AdjacencyList.Tests
+import qualified Carbon.DataStructures.Trees.LeftLeaningRedBlackTree.Tests
 
 main :: IO ()
 main = defaultMain [testGroup "Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree.Tests" Carbon.DataStructures.Trees.SelfBalancingBinarySearchTree.Tests.tests
 	, testGroup "Carbon.DataStructures.Trees.BinaryHeap.Tests" Carbon.DataStructures.Trees.BinaryHeap.Tests.tests
 	, testGroup "Carbon.DataStructures.Queues.PriorityQueue.Tests" Carbon.DataStructures.Queues.PriorityQueue.Tests.tests
-	, testGroup "Carbon.DataStructures.Graphs.AdjacencyList.Tests" Carbon.DataStructures.Graphs.AdjacencyList.Tests.tests
+	--, testGroup "Carbon.DataStructures.Graphs.AdjacencyList.Tests" Carbon.DataStructures.Graphs.AdjacencyList.Tests.tests
+	, testGroup "Carbon.DataStructures.Trees.LeftLeaningRedBlackTree.Tests" Carbon.DataStructures.Trees.LeftLeaningRedBlackTree.Tests.tests
 	, testGroup "Stub" [tests_a]
 	]
 
