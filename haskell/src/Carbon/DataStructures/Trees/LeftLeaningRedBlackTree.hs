@@ -53,25 +53,32 @@ create :: Tree a
 create = Leaf
 
 add :: (Ord a) => Tree a -> a -> Tree a
-add (Branch left node right colour) val
+add tree val
 	= let
-		get_left_node (Branch left _ _ _)
-			= left
-		do_insert (Branch left node right colour) val
-			= let
-				(Branch left' _ right' colour') = insert_side (Branch left node right colour) val
-				(Branch left'' _ right'' colour'') = if ((not (is_red right')) && (is_red right')) then (rotate_left (Branch left' node right' colour')) else (Branch left' node right' colour')
-				centre''' = if ((is_red left') && (is_red (get_left_node left''))) then (rotate_right (Branch left'' node right'' colour'')) else (Branch left'' node right'' colour'')
-			in centre'''
-		insert_side (Branch left node right colour) val
-			| val < node = do_insert left val
-			| val > node = do_insert right val
-			| otherwise = (Branch left' node right' colour')
-			where (Branch left' _ right' colour') = if ((is_red left) && (is_red right)) then (flip_colours (Branch left node right colour)) else (Branch left node right colour) -- if move after rotations becomes 2-3 trees
-		insert_side Leaf val
-			= (Branch Leaf val Leaf Red) -- new nodes always red
-		(Branch left' _ right' _) = do_insert (Branch left node right colour) val
-	in (Branch left' node right' Black) -- root always black
+		(Branch left' node' right' _) = fix_up $ do_add tree val
+	in (Branch left' node' right' Black) -- root always black
+
+do_add :: (Ord a) => Tree a -> a -> Tree a
+do_add (Branch left node right colour) val
+	| val < node = (Branch (add left val) node right colour)
+	| val > node = (Branch left node (add right val) colour)
+	| otherwise = (Branch left node right colour)
+do_add Leaf val = (Branch Leaf val Leaf Black)
+
+get_left_node :: Tree a -> Tree a
+get_left_node (Branch left _ _ _) = left
+get_left_node Leaf = Leaf
+
+fix_up :: Tree a -> Tree a
+fix_up (Branch left node right colour)
+	= let
+		branch' = if ((not (is_red left)) && (is_red right)) then (rotate_left (Branch left node right colour)) else (Branch left node right colour)
+		(Branch left' _ right' _) = branch'
+		branch'' = if ((is_red left') && (is_red (get_left_node left'))) then (rotate_right branch') else branch'
+		(Branch left'' _ right'' _) = branch''
+		branch''' = if ((is_red left'') && (is_red right'')) then (flip_colours branch'') else branch''
+	in branch'''
+
 
 rotate_left :: Tree a -> Tree a
 rotate_left (Branch left node (Branch right_left right_node right_right right_colour) colour)
@@ -96,7 +103,7 @@ flip_colours (Branch (Branch left_left left_node left_right left_colour) node (B
 
 is_red :: Tree a -> Bool
 is_red (Branch _ _ _ Red) = True
-is_red Leaf = False
+is_red _ = False
 
 is_black :: Tree a -> Bool
 is_black node = not $ is_red node
