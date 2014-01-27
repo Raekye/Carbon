@@ -62,6 +62,11 @@ Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements, clean
 
 ##### Merkle tree (0)
 
+##### Left leaning red black tree (1)
+Ordered set backed by a [left leaning red black tree][10]
+
+##### AA tree (0)
+
 ##### Todo
 - sorting identify stable/unstable, time complexity, depth, etc.
 - erlang benchmarks
@@ -90,3 +95,4 @@ Statuses: 0 todo. 1 in progress. 2 implemented but could use improvements, clean
 [7]: http://www.haskell.org/haskellwiki/Cabal-Install
 [8]: https://github.com/basho/rebar
 [9]: https://github.com/ghc/packages-bytestring
+[10]: http://www.cs.princeton.edu/~rs/talks/LLRB/LLRB.pdf

@@ -59,45 +59,53 @@ add tree val
 	in (Branch left' node' right' Black) -- root always black
 
 do_add :: (Ord a) => Tree a -> a -> Tree a
-do_add (Branch left node right colour) val
+do_add branch@(Branch left node right colour) val
 	| val < node = (Branch (add left val) node right colour)
 	| val > node = (Branch left node (add right val) colour)
-	| otherwise = (Branch left node right colour)
+	| otherwise = branch
 do_add Leaf val = (Branch Leaf val Leaf Black)
 
 get_left_node :: Tree a -> Tree a
 get_left_node (Branch left _ _ _) = left
 get_left_node Leaf = Leaf
 
-fix_up :: Tree a -> Tree a
-fix_up (Branch left node right colour)
-	= let
-		branch' = if ((not (is_red left)) && (is_red right)) then (rotate_left (Branch left node right colour)) else (Branch left node right colour)
-		(Branch left' _ right' _) = branch'
-		branch'' = if ((is_red left') && (is_red (get_left_node left'))) then (rotate_right branch') else branch'
-		(Branch left'' _ right'' _) = branch''
-		branch''' = if ((is_red left'') && (is_red right'')) then (flip_colours branch'') else branch''
-	in branch'''
+get_right_node :: Tree a -> Tree a
+get_right_node (Branch _ _ right _) = right
+get_right_node Leaf = Leaf
 
+fix_up :: Tree a -> Tree a
+fix_up branch
+	= on_predicate_branch [is_red] [is_red] flip_colours .
+	on_predicate_branch [is_red, is_red . get_left_node] [] rotate_right .
+	on_predicate_branch [not . is_red] [is_red] rotate_left $ branch
+
+on_predicate_branch :: [Tree a -> Bool] -> [Tree a -> Bool] -> (Tree a -> Tree a) -> Tree a -> Tree a
+on_predicate_branch lps rps f b
+	= on_predicate (\ x -> (all ($ get_left_node b) lps) && (all ($ get_right_node b) rps)) f b -- the dollar sign "reverses" the order of the function application
+
+on_predicate :: (a -> Bool) -> (a -> a) -> a -> a
+on_predicate p f x
+	| p x = f x
+	| otherwise = x
 
 rotate_left :: Tree a -> Tree a
-rotate_left (Branch left node (Branch right_left right_node right_right right_colour) colour)
+rotate_left (Branch left node (Branch rl rn rr rc) colour)
 	= let
-		left' = (Branch left node right_left Red)
-		centre' = (Branch left' right_node right_right colour)
+		left' = (Branch left node rl Red)
+		centre' = (Branch left' rn rr colour)
 	in centre'
 
 rotate_right :: Tree a -> Tree a
-rotate_right (Branch (Branch left_left left_node left_right left_colour) node right colour)
+rotate_right (Branch (Branch ll ln lr lc) node right colour)
 	= let
-		right' = (Branch left_right node right Red)
-		centre' = (Branch left_left left_node right' colour)
+		right' = (Branch lr node right Red)
+		centre' = (Branch ll ln right' colour)
 	in centre'
 
 flip_colours :: Tree a -> Tree a
-flip_colours (Branch (Branch left_left left_node left_right left_colour) node (Branch right_left right_node right_right right_colour) colour) = let
-		left' = (Branch left_left left_node left_right (invert_colour left_colour))
-		right' = (Branch right_left right_node right_right (invert_colour right_colour))
+flip_colours (Branch (Branch ll ln lr lc) node (Branch rl rn rr rc) colour) = let
+		left' = (Branch ll ln lr (invert_colour lc))
+		right' = (Branch rl rn rr (invert_colour rc))
 		centre' = (Branch left' node right' (invert_colour colour))
 	in centre'
 
