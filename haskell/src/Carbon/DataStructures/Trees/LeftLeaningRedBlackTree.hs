@@ -21,10 +21,28 @@ instance GenericBinaryTree.GenericBinaryTree Tree where
 	details (Branch _ _ _ colour) = "C: " ++ (show colour)
 
 remove :: (Ord a) => Tree a -> a -> Tree a
-remove _ _ = Leaf
+remove branch@(Branch l n r c) val
+	= branch
+remove Leaf _ = Leaf
+
+--remove_min :: (Ord a) => Tree a -> (Tree a, Maybe a)
+--remove_min branch@(Branch l n r c)
+--	| 
+--remove_min Leaf
+--	=  (Leaf, Nothing)
+
+do_remove_min :: (Ord a) => Tree a -> (Tree a, Maybe a)
+do_remove_min branch@(Branch l n r c)
+	= (l, Just n)
+do_remove_min Leaf
+	= (Leaf, Nothing)
 
 contains :: (Ord a) => Tree a -> a -> Bool
-contains _ _ = False
+contains branch@(Branch l n r _) val
+	| n < val = contains l val
+	| n > val = contains r val
+	| otherwise = True
+contains Leaf _ = False
 
 find :: Tree a -> (a -> Int) -> Maybe a
 find _ _ = Nothing
@@ -55,14 +73,16 @@ create = Leaf
 add :: (Ord a) => Tree a -> a -> Tree a
 add tree val
 	= let
-		(Branch left' node' right' _) = fix_up $ do_add tree val
+		(Branch left' node' right' _) = do_add tree val
 	in (Branch left' node' right' Black) -- root always black
 
 do_add :: (Ord a) => Tree a -> a -> Tree a
 do_add branch@(Branch left node right colour) val
-	| val < node = (Branch (add left val) node right colour)
-	| val > node = (Branch left node (add right val) colour)
-	| otherwise = branch
+	= let branch'
+		| val < node = (Branch (add left val) node right colour)
+		| val > node = (Branch left node (add right val) colour)
+		| otherwise = branch
+	in fix_up branch'
 do_add Leaf val = (Branch Leaf val Leaf Black)
 
 get_left_node :: Tree a -> Tree a
